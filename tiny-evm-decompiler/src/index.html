@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset = "UTF-8">
+      <title>Hello World!</title>
+   </head>
+
+   <body>
+      <div style="display: flex">
+         <div style="width: 50%">
+            <h1>Enter the contract here:</h1>
+            <textarea id="contract"></textarea>
+
+            <button id="load">Load</button>
+            <button id="load_example">Load hello world contract</button>
+            
+            <div style="max-height: 300px; overflow: scroll;">
+               <table id="opcodes"></table>   
+            </div>
+         </div>
+         <div style="width: 50%">
+            Here we can have jump info
+
+            <table id="jumps"></table>   
+         </div>
+      </div>
+
+      <script type="module" src="./SetExports.js"></script>
+      <script type="module" src="./frontend.js"></script>
+   </body>
+</html>

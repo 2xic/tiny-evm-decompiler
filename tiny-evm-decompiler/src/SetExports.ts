@@ -1,0 +1,2 @@
+// hack
+window.exports = {}
