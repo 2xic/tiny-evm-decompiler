@@ -1,31 +1,41 @@
 <!DOCTYPE html>
 <html>
-   <head>
-      <meta charset = "UTF-8">
-      <title>Hello World!</title>
-   </head>
 
-   <body>
-      <div style="display: flex">
-         <div style="width: 50%">
-            <h1>Enter the contract here:</h1>
-            <textarea id="contract"></textarea>
+<head>
+   <meta charset="UTF-8">
+   <title>Hello World!</title>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" type="text/css" />
 
-            <button id="load">Load</button>
-            <button id="load_example">Load hello world contract</button>
-            
-            <div style="max-height: 300px; overflow: scroll;">
-               <table id="opcodes"></table>   
-            </div>
-         </div>
-         <div style="width: 50%">
-            Here we can have jump info
+   <!--
+   <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+   !-->
+</head>
 
-            <table id="jumps"></table>   
+<body>
+   <div style="display: flex">
+      <div style="width: 50%">
+         <h1>Enter the contract here:</h1>
+         <textarea id="contract"></textarea>
+
+         <button id="load">Load</button>
+         <button id="load_example">Load hello world contract</button>
+
+         <div style="max-height: 300px; overflow: scroll;">
+            <table id="opcodes"></table>
          </div>
       </div>
+      <div style="width: 50%">
+         Here we can have jump info
 
-      <script type="module" src="./SetExports.js"></script>
-      <script type="module" src="./frontend.js"></script>
-   </body>
+         <table id="jumps"></table>
+
+         <div id="cfg"></div>
+      </div>
+   </div>
+
+   <script type="module" src="./SetExports.js"></script>
+   <script type="module" src="./frontend.js"></script>
+</body>
+
 </html>

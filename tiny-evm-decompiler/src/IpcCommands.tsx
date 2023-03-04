@@ -1,7 +1,11 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { JumpDestinations } from './interactors/GetJumpDestinations';
+import { CodeBlocks } from './interactors/GetCodeBlocksInteractor';
 import { ParsedOpcodes } from './interactors/GetOpcodesInteractor';
 import { electronAPI } from './IpcCommandsInteraface';
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+/**/
+contextBridge.exposeInMainWorld("require", require);
 
 contextBridge.exposeInMainWorld('electronAPI', {
     load: (contract: string) => {
@@ -14,7 +18,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
 ipcRenderer.on('contractOpcodes', (_, data) => {
     const opcodes = document.getElementById('opcodes')
-    const response: ParsedOpcodes = JSON.parse(data)
+    const response: ParsedOpcodes[] = JSON.parse(data)
     response.forEach((entry) => {
         const row = document.createElement("tr");
 
@@ -33,17 +37,28 @@ ipcRenderer.on('contractOpcodes', (_, data) => {
         row.appendChild(opcode_arguments)
 
         opcodes.appendChild(row);
+
     })
+    /*
+    const root = ReactDOM.createRoot(
+        document.getElementById('mynetwork') as HTMLElement
+      );
+      root.render(
+        <React.Fragment>
+          yooo
+        </React.Fragment>
+      );      
+    */
 })
 
-ipcRenderer.on('jumpDestinations', (_, data) => {
+ipcRenderer.on('contractCodeBlcoks', (_, data) => {
     const opcodes = document.getElementById('jumps')
-    const response: JumpDestinations[] = JSON.parse(data)
+    const response: CodeBlocks[] = JSON.parse(data)
     response.forEach((entry) => {
         const row = document.createElement("tr");
 
         const address = document.createElement("td");
-        address.innerHTML = entry.address.toString(16);
+        address.innerHTML = entry.startAddress.toString(16);
 
         const jump_name = document.createElement("td");
         jump_name.innerHTML = entry.name;
@@ -52,7 +67,7 @@ ipcRenderer.on('jumpDestinations', (_, data) => {
         row.appendChild(jump_name)
 
         row.addEventListener('click', (() => {
-            document.getElementById(entry.address.toString(16)).scrollIntoView()
+            document.getElementById(entry.startAddress.toString(16)).scrollIntoView()
         }))
 
         opcodes.appendChild(row);
