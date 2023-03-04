@@ -1,5 +1,5 @@
 //import { OpCode } from 'tinyeth/dist/evm/OpCode';
-import { Opcodes } from 'tinyeth/dist/';
+import { OpcodeLookups } from 'tinyeth/dist/';
 import { OpCode } from 'tinyeth/dist/evm/OpCode';
 
 export class GetOpcodesInteractor {
@@ -16,39 +16,51 @@ export class GetOpcodesInteractor {
 
     while (contractBuffer.length) {
       const currentOpcode = contractBuffer[0];
-      const opcode: OpCode | undefined = Opcodes[currentOpcode];
+      const opcode: OpCode | undefined = OpcodeLookups[currentOpcode];
 
-      if (opcode?.mnemonic === 'JUMPDEST'){
+      if (opcode?.mnemonic === 'JUMPDEST') {
         isReadingCode = true;
         codeBlockType = CodeBlockType.START;
       }
 
       if (!opcode) {
         opcodes.push({
-          address,
-          opcode: 'INVALID',
+          offset: address,
+          opcode: {
+            mnemonic: `INVALID`,
+            arguments: [],
+            isReal: false,
+          },
           value: currentOpcode,
         });
         contractBuffer = contractBuffer.slice(1);
         address += 1;
-      } else if (!isReadingCode){
+      } else if (!isReadingCode) {
         opcodes.push({
-          address,
-          opcode: `DATA 0x${currentOpcode.toString(16)}`,
+          offset: address,
+          opcode: {
+            mnemonic: `DATA`,
+            arguments: [`0x${currentOpcode.toString(16)}`],
+            isReal: false,
+          },
           value: currentOpcode,
         });
         contractBuffer = contractBuffer.slice(1);
+        address += 1;
       } else {
-        if (opcode.isTerminating){
+        if (opcode.isTerminating) {
           isReadingCode = false;
+          codeBlockType = CodeBlockType.END
+        } else if (opcode.mnemonic === 'JUMPI') {
           codeBlockType = CodeBlockType.END
         }
         const opcodeArguments = contractBuffer.slice(1, opcode.length);
         opcodes.push({
-          address: address,
+          offset: address,
           opcode: {
             mnemonic: opcode.mnemonic,
             arguments: Array.from(opcodeArguments).map((item) => `0x${item.toString(16)}`),
+            isReal: true,
           },
           value: currentOpcode,
           codeBlockType,
@@ -65,16 +77,25 @@ export class GetOpcodesInteractor {
 }
 
 export type ParsedOpcodes = {
-  address: number,
-  opcode: string | {
-    mnemonic: string;
-    arguments: unknown[];
-  };
+  offset: number,
+  opcode: FakeOpcode | RealOpcode;
   value: number;
   codeBlockType?: CodeBlockType,
 }
 
+export interface FakeOpcode {
+  mnemonic: string;
+  arguments: unknown[];
+  isReal: boolean;
+}
+
+export interface RealOpcode {
+  mnemonic: string;
+  arguments: unknown[];
+  isReal: boolean;
+}
+
 export enum CodeBlockType {
-  'START',
-  'END'
+  'START' = 0,
+  'END' = 1
 };

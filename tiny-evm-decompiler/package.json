@@ -8,17 +8,20 @@
     "build": "tsc && cp src/index.html dist/index.html",
     "start": "npm run build && electron-forge start",
     "package": "electron-forge package",
+    "debug": "npm run make -- --platform darwin",
     "make": "electron-forge make"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@types/jsdom": "^21.1.0",
+    "bignumber.js": "^9.0.2",
     "bun-types": "^0.5.7",
     "electron-squirrel-startup": "^1.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "reflect-metadata": "^0.1.13",
+    "tinyeth": "file:../../tinyeth/tinyeth-0.1.0.tgz",
     "typescript": "^4.2.1",
     "vis-network": "^9.1.4"
   },
