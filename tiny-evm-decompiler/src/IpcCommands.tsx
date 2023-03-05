@@ -110,4 +110,9 @@ ipcRenderer.on('contractGraphBlocks', (_, rawResponse) => {
         options
     );
     network.stabilize();
+
+    network.on("afterDrawing", function(ctx) {
+        var dataURL = ctx.canvas.toDataURL();
+        (document.getElementById('canvasImg') as HTMLAnchorElement).href = dataURL;
+    })
 })

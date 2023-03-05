@@ -13,23 +13,43 @@ describe('GetOpcodesInteractor', () => {
       "arguments": [
         "0x0",
       ],
+      "isReal": true,
       "mnemonic": "PUSH1",
     },
   ],
   [
     {
       "arguments": [],
+      "isReal": true,
       "mnemonic": "JUMP",
     },
   ],
   [
-    "DATA 0x1",
+    {
+      "arguments": [
+        "0x1",
+      ],
+      "isReal": false,
+      "mnemonic": "DATA",
+    },
   ],
   [
-    "DATA 0x2",
+    {
+      "arguments": [
+        "0x2",
+      ],
+      "isReal": false,
+      "mnemonic": "DATA",
+    },
   ],
   [
-    "DATA 0x3",
+    {
+      "arguments": [
+        "0x3",
+      ],
+      "isReal": false,
+      "mnemonic": "DATA",
+    },
   ],
 ]
 `);

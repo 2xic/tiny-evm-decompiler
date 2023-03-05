@@ -7,11 +7,17 @@ export class GetCodeBlocksInteractor {
         let block: ParsedOpcodes[] = [];
         for (var i = 0; i < opcodes.length; i++) {
             const opcode = opcodes[i];
-            if (opcode.codeBlockType === CodeBlockType.END) {
-                block.push(opcode);
-                blocks.push([...block]);
-              //  console.log(block);
-                block = [];
+            if ([CodeBlockType.END, CodeBlockType.DATA].includes(opcode.codeBlockType)) {
+                if (opcode.codeBlockType === CodeBlockType.DATA) {
+                    if (block.length) {
+                        blocks.push([...block]);
+                        block = [];
+                    }
+                } else {
+                    block.push(opcode);
+                    blocks.push([...block]);
+                    block = [];
+                }
             } else {
                 block.push(opcode)
             }
@@ -24,11 +30,19 @@ export class GetCodeBlocksInteractor {
         const merged = blocks.map((item): CodeBlocks => {
             const start = item[0].offset;
             const end = item[item.length - 1].offset + 1;
+            const properties: CodeBLockProperty[] = [];
+            item.find((item) =>{
+                if (item.opcode.mnemonic.includes('LOG')){
+                    properties.push(CodeBLockProperty.HAS_LOG)
+                }
+            })
+
             return {
                 name: start.toString(16),
                 startAddress: start,
                 endAddress: end,
                 block: item,
+                properties,
             };
         });
 
@@ -41,4 +55,9 @@ export interface CodeBlocks {
     startAddress: number;
     endAddress: number;
     block: ParsedOpcodes[];
+    properties: CodeBLockProperty[]
+}
+
+export enum CodeBLockProperty {
+    'HAS_LOG' = 'HAS_LOG',
 }

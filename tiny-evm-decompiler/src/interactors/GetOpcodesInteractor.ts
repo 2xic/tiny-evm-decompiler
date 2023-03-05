@@ -43,6 +43,7 @@ export class GetOpcodesInteractor {
             arguments: [`0x${currentOpcode.toString(16)}`],
             isReal: false,
           },
+          codeBlockType: CodeBlockType.DATA,
           value: currentOpcode,
         });
         contractBuffer = contractBuffer.slice(1);
@@ -65,7 +66,7 @@ export class GetOpcodesInteractor {
           value: currentOpcode,
           codeBlockType,
         });
-        contractBuffer = contractBuffer.slice(!opcode.length ? 1 : opcode.length);
+        contractBuffer = contractBuffer.slice(opcode.length);
         address += opcode.length;
       }
 
@@ -96,6 +97,7 @@ export interface RealOpcode {
 }
 
 export enum CodeBlockType {
-  'START' = 0,
-  'END' = 1
+  'START' = 'START',
+  'END' = 'END',
+  'DATA' = 'DATA',
 };

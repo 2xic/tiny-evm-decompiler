@@ -8,8 +8,9 @@
     "build": "tsc && cp src/index.html dist/index.html",
     "start": "npm run build && electron-forge start",
     "package": "electron-forge package",
-    "debug": "npm run make -- --platform darwin",
-    "make": "electron-forge make"
+    "osx-build": "npm run make -- --platform darwin",
+    "make": "electron-forge make",
+    "debug-cfg": "npm run build && node dist/debug_cfg.js && python3 debug_cfg.py"
   },
   "author": "",
   "license": "ISC",

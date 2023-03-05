@@ -13,21 +13,19 @@ import { getClassFromTestContainer } from "tinyeth/dist/container/getClassFromTe
 
 export class GetControlsFlowInteractor {
     public async getControlFlow({
-    //    contract,
         codeBlocks
     }: {
-     //   contract: string;
         codeBlocks: CodeBlocks[]
     }): Promise<GraphCodeBlocks[]> {
         const mappingCodeBlocks: GraphCodeBlocks[] = [];
 
-        for(const [index, codeblock] of Object.entries(codeBlocks)){
-            const calls: string[] = [];
+        for (const [index, codeblock] of Object.entries(codeBlocks)) {
+            const calls: Set<string> = new Set([]);
             const evm = getClassFromTestContainer(ExposedEvm);
             console.log('');
             const code = (codeblock.block.filter((item) => {
                 return item.opcode.isReal;
-            }).map((item) =>{
+            }).map((item) => {
                 console.log(
                     `0x${item.offset.toString(16)} ${item.opcode.mnemonic} ${item.opcode.arguments.join(' ')}`
                 )
@@ -37,12 +35,9 @@ export class GetControlsFlowInteractor {
             const mnemonic2Buffer = new MnemonicParser().parse({
                 script: code.join('\n')
             })
-  //          console.log('')
-//            console.log(code.join('\n'));
-    //        console.log('')
-            
+
             evm.boot({
-                program: mnemonic2Buffer, //Buffer.from(contract, 'hex'),
+                program: mnemonic2Buffer,
                 context: {
                     nonce: 1,
                     sender: new Address(),
@@ -52,22 +47,38 @@ export class GetControlsFlowInteractor {
                     data: Buffer.from('', 'hex'),
                 },
             })
+            // TODO:  This should not be necessary, fix it
             evm.stack.push(new BigNumber(0));
             evm.stack.push(new BigNumber(0));
             evm.stack.push(new BigNumber(0));
             evm.stack.push(new BigNumber(0));
+            evm.stack.push(new BigNumber(0));
+            evm.stack.push(new BigNumber(0));
+            evm.stack.push(new BigNumber(0));
+            evm.stack.push(new BigNumber(0));
+            evm.stack.push(new BigNumber(0));
+            evm.stack.push(new BigNumber(0));
+            evm.stack.push(new BigNumber(0));
+            evm.stack.push(new BigNumber(0));
+            evm.stack.push(new BigNumber(0));
+            evm.stack.push(new BigNumber(0));
+            evm.stack.push(new BigNumber(0));
+            evm.stack.push(new BigNumber(0));
+
+            const jumpInstructions = ['JUMP', 'JUMPI'];
             const execute = async () => {
                 try {
                     await evm.execute({
-                        stopAtPc: mnemonic2Buffer.length - 1,
+                        // wait is this correct ? 
+                        stopAtPc: mnemonic2Buffer.length, // - 1,
                     });
                     const opcode = evm.peekOpcode().opcode.mnemonic;
-                    if (['JUMP', 'JUMPI'].includes(opcode)) {
+                    if (jumpInstructions.includes(opcode)) {
                         const jumpAddress = evm.stack.pop();
-                        calls.push(jumpAddress.toString(16))
-                        if (opcode === 'JUMPI'){
+                        calls.add(jumpAddress.toString(16))
+                        if (opcode === 'JUMPI') {
                             // The next code block will be the fall through 
-                            calls.push(
+                            calls.add(
                                 codeBlocks[parseInt(index) + 1].startAddress.toString(16)
                             )
                         }
@@ -84,13 +95,25 @@ export class GetControlsFlowInteractor {
             }
             await execute();
 
-            console.log({
-                calls,
-            })
+            /**
+             * The current block is a data block, is it connected to the next
+             * or the previous node ? 
+             */
+            if (!codeBlocks[index].block[0].opcode.isReal){
+                const nextIndex = parseInt(index) + 1;
+                if (nextIndex < codeBlocks.length) {
+                    const nextBlock = codeBlocks[nextIndex];
+                    const address = nextBlock.startAddress.toString(16);
+                    // The next code block will be the fall through 
+                    calls.add(
+                        address
+                    )
+                }
+            }
 
             mappingCodeBlocks.push({
                 ...codeblock,
-                calls,
+                calls: [...calls],
             })
         }
 
@@ -98,6 +121,6 @@ export class GetControlsFlowInteractor {
     }
 }
 
-export interface GraphCodeBlocks extends CodeBlocks{
+export interface GraphCodeBlocks extends CodeBlocks {
     calls: string[];
 }
