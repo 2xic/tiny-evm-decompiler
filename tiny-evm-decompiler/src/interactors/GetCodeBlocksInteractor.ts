@@ -7,11 +7,18 @@ export class GetCodeBlocksInteractor {
         let block: ParsedOpcodes[] = [];
         for (var i = 0; i < opcodes.length; i++) {
             const opcode = opcodes[i];
+
             if ([CodeBlockType.END, CodeBlockType.DATA].includes(opcode.codeBlockType)) {
                 if (opcode.codeBlockType === CodeBlockType.DATA) {
                     if (block.length) {
-                        blocks.push([...block]);
-                        block = [];
+                        if (![CodeBlockType.DATA, CodeBlockType.INVALID].includes(block[block.length - 1].codeBlockType)){
+                            blocks.push([...block]);
+                            block = [
+                                opcode
+                            ];
+                        } else {
+                            block.push(opcode);
+                        }
                     }
                 } else {
                     block.push(opcode);

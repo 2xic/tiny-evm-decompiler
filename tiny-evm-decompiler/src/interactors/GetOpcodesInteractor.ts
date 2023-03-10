@@ -31,6 +31,7 @@ export class GetOpcodesInteractor {
             arguments: [],
             isReal: false,
           },
+          codeBlockType: CodeBlockType.INVALID,
           value: currentOpcode,
         });
         contractBuffer = contractBuffer.slice(1);
@@ -100,4 +101,5 @@ export enum CodeBlockType {
   'START' = 'START',
   'END' = 'END',
   'DATA' = 'DATA',
+  'INVALID' = 'INVALID',
 };

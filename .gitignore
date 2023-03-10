@@ -5,3 +5,6 @@ example_data.ts
 vis.min.js
 out
 cfg
+debug_opcodes.txt
+debug_cfg.json
+

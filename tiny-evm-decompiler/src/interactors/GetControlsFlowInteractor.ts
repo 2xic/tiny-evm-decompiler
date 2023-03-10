@@ -47,30 +47,18 @@ export class GetControlsFlowInteractor {
                     data: Buffer.from('', 'hex'),
                 },
             })
-            // TODO:  This should not be necessary, fix it
+            /*
             evm.stack.push(new BigNumber(0));
             evm.stack.push(new BigNumber(0));
             evm.stack.push(new BigNumber(0));
-            evm.stack.push(new BigNumber(0));
-            evm.stack.push(new BigNumber(0));
-            evm.stack.push(new BigNumber(0));
-            evm.stack.push(new BigNumber(0));
-            evm.stack.push(new BigNumber(0));
-            evm.stack.push(new BigNumber(0));
-            evm.stack.push(new BigNumber(0));
-            evm.stack.push(new BigNumber(0));
-            evm.stack.push(new BigNumber(0));
-            evm.stack.push(new BigNumber(0));
-            evm.stack.push(new BigNumber(0));
-            evm.stack.push(new BigNumber(0));
-            evm.stack.push(new BigNumber(0));
+            evm.stack.push(new BigNumber(0));*/
 
             const jumpInstructions = ['JUMP', 'JUMPI'];
             const execute = async () => {
                 try {
                     await evm.execute({
                         // wait is this correct ? 
-                        stopAtPc: mnemonic2Buffer.length, // - 1,
+                        stopAtPc: mnemonic2Buffer.length - 1,
                     });
                     const opcode = evm.peekOpcode().opcode.mnemonic;
                     if (jumpInstructions.includes(opcode)) {
@@ -95,11 +83,14 @@ export class GetControlsFlowInteractor {
             }
             await execute();
 
+            console.log({
+                calls,
+            })
             /**
              * The current block is a data block, is it connected to the next
              * or the previous node ? 
              */
-            if (!codeBlocks[index].block[0].opcode.isReal){
+            if (codeBlocks[index].block[0].opcode.isReal){
                 const nextIndex = parseInt(index) + 1;
                 if (nextIndex < codeBlocks.length) {
                     const nextBlock = codeBlocks[nextIndex];
@@ -121,6 +112,6 @@ export class GetControlsFlowInteractor {
     }
 }
 
-export interface GraphCodeBlocks extends CodeBlocks {
+export interface GraphCodeBlocks extends CodeBlocks{
     calls: string[];
 }

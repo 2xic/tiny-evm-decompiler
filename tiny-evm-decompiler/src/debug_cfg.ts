@@ -17,4 +17,7 @@ const contractCodeBlcoks = new GetCodeBlocksInteractor().getCodeBlocks(opcodes);
         codeBlocks: contractCodeBlcoks
     })
     fs.writeFileSync('debug_cfg.json', JSON.stringify(results));
+    fs.writeFileSync('debug_opcodes.txt', contractCodeBlcoks.map((item) => {
+        return item.block.map((item) => `0x${item.offset.toString(16)} ${item.opcode.mnemonic} ${item.opcode.arguments.join(' ')}`).join('\n')
+    }).join('\n'))
 })()
