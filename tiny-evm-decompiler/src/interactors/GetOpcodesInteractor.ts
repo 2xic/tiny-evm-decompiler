@@ -1,5 +1,5 @@
 //import { OpCode } from 'tinyeth/dist/evm/OpCode';
-import { OpcodeLookups } from 'tinyeth/dist/';
+import { OpcodeLookups, OpcodeMnemonic } from 'tinyeth/dist/';
 import { OpCode } from 'tinyeth/dist/evm/OpCode';
 
 export class GetOpcodesInteractor {
@@ -18,7 +18,7 @@ export class GetOpcodesInteractor {
       const currentOpcode = contractBuffer[0];
       const opcode: OpCode | undefined = OpcodeLookups[currentOpcode];
 
-      if (opcode?.mnemonic === 'JUMPDEST') {
+      if (opcode?.mnemonic === OpcodeMnemonic.JUMPDEST) {
         isReadingCode = true;
         codeBlockType = CodeBlockType.START;
       }
@@ -53,9 +53,10 @@ export class GetOpcodesInteractor {
         if (opcode.isTerminating) {
           isReadingCode = false;
           codeBlockType = CodeBlockType.END
-        } else if (opcode.mnemonic === 'JUMPI') {
+        } else if (opcode.mnemonic === OpcodeMnemonic.JUMPI) {
           codeBlockType = CodeBlockType.END
         }
+
         const opcodeArguments = contractBuffer.slice(1, opcode.length);
         opcodes.push({
           offset: address,

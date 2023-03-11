@@ -25,6 +25,13 @@ export class GetCodeBlocksInteractor {
                     blocks.push([...block]);
                     block = [];
                 }
+            } else if (opcode.codeBlockType === CodeBlockType.START){
+                if (block.length){
+                    blocks.push([...block]);
+                    block = [opcode];
+                } else{
+                    block.push(opcode)
+                }
             } else {
                 block.push(opcode)
             }

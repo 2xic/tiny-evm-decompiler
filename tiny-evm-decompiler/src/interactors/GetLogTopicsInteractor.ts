@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import { Address, ExposedEvm, getClassFromTestContainer, MnemonicParser, Wei } from "tinyeth";
+import { getCodeBlock } from "../helpers/getOpcodesFromMnemonic";
 import { CodeBlocks } from "./GetCodeBlocksInteractor";
 
 export class GetLogTopicsInteractor {
@@ -12,45 +13,40 @@ export class GetLogTopicsInteractor {
         const topics: LogTopics[] = [];
         for (const codeblock of blocksOfInterest) {
             const evm = getClassFromTestContainer(ExposedEvm);
-            console.log('');
-            const code = (codeblock.block.filter((item) => {
-                return item.opcode.isReal;
-            }).map((item) => {
-                console.log(
-                    `0x${item.offset.toString(16)} ${item.opcode.mnemonic} ${item.opcode.arguments.join(' ')}`
-                )
-                return `${item.opcode.mnemonic} ${item.opcode.arguments.join(' ')}`
-            }))
-            console.log('');
-            const mnemonic2Buffer = new MnemonicParser().parse({
-                script: code.join('\n')
-            })
+            const mnemonic2Buffer = getCodeBlock({ codeblock })
 
-            evm.boot({
-                program: mnemonic2Buffer,
-                context: {
-                    nonce: 1,
-                    sender: new Address(),
-                    receiver: new Address(),
-                    gasLimit: new BigNumber(0),
-                    value: new Wei(new BigNumber(8)),
-                    data: Buffer.from('', 'hex'),
-                },
-            })
-            await evm.execute({
-                stopAtOpcodes: [0xa0, 0xa1, 0xa2, 0xa3, 0xa4]
-            })
-            const opcode = evm.peekOpcode().opcodeNumber;
-            if (opcode == 0xa2) {
-                topics.push({
-                    offset: evm.stack.pop(),
-                    size: evm.stack.pop(),
-                    topic1: evm.stack.pop(),
-                    topic0: evm.stack.pop(),
+            try {
+                evm.boot({
+                    program: mnemonic2Buffer,
+                    context: {
+                        nonce: 1,
+                        sender: new Address(),
+                        receiver: new Address(),
+                        gasLimit: new BigNumber(0),
+                        value: new Wei(new BigNumber(8)),
+                        data: Buffer.from('', 'hex'),
+                    },
                 })
-            } else {
-                throw new Error('Not implemented');
+    
+                await evm.execute({
+                    stopAtOpcodes: [0xa0, 0xa1, 0xa2, 0xa3, 0xa4]
+                })
+    
+                const opcode = evm.peekOpcode().opcodeNumber;
+                if (opcode == 0xa2) {
+                    topics.push({
+                        offset: evm.stack.pop(),
+                        size: evm.stack.pop(),
+                        topic1: evm.stack.pop(),
+                        topic0: evm.stack.pop(),
+                    })
+                } else {
+                    throw new Error('Not implemented');
+                }                
+            } catch(err){
+                console.log(err);
             }
+
         }
 
         return topics;

@@ -12,6 +12,7 @@ import BigNumber from 'bignumber.js';
 import { getClassFromTestContainer } from "tinyeth/dist/container/getClassFromTestContainer";
 import { ParsedOpcodes } from "./GetOpcodesInteractor";
 import { Logger } from "../helpers/Logger";
+import { getCodeBlock } from "../helpers/getOpcodesFromMnemonic";
 
 const DEBUG = false;
 
@@ -27,19 +28,12 @@ export class GetControlsFlowInteractor {
         for (const [index, codeblock] of Object.entries(codeBlocks)) {
             const calls: Set<string> = new Set([]);
             const evm = getClassFromTestContainer(ExposedEvm);
-            logger.log('');
-            const code = (codeblock.block.filter((item) => {
-                return item.opcode.isReal;
-            }).map((item) => {
-                logger.log(
-                    `0x${item.offset.toString(16)} ${item.opcode.mnemonic} ${item.opcode.arguments.join(' ')}`
-                )
-                return `${item.opcode.mnemonic} ${item.opcode.arguments.join(' ')}`
-            }))
-            
-            const mnemonic2Buffer = new MnemonicParser().parse({
-                script: code.join('\n')
-            })
+            const mnemonic2Buffer = getCodeBlock({ codeblock })
+
+            // Hack to align the stack
+            for (let i = 0; i < 32; i++) {
+                evm.stack.push(new BigNumber('inf'))
+            }
 
             evm.boot({
                 program: mnemonic2Buffer,
@@ -62,7 +56,9 @@ export class GetControlsFlowInteractor {
                     const opcode = evm.peekOpcode().opcode.mnemonic;
                     if (jumpInstructions.includes(opcode)) {
                         const jumpAddress = evm.stack.pop();
-                        calls.add(jumpAddress.toString(16))
+                        if (!jumpAddress.isNaN()) {
+                            calls.add(jumpAddress.toString(16))
+                        }
                         if (opcode === OpcodeMnemonic.JUMPI) {
                             calls.add(
                                 codeBlocks[parseInt(index) + 1].startAddress.toString(16)
@@ -79,7 +75,7 @@ export class GetControlsFlowInteractor {
                 index,
                 codeBlocks,
             });
-            if (fallThoughtAddress){
+            if (fallThoughtAddress) {
                 calls.add(fallThoughtAddress)
             }
 
@@ -92,25 +88,27 @@ export class GetControlsFlowInteractor {
         return mappingCodeBlocks;
     }
 
-    private getFallThoughtAddress({index, codeBlocks}: {
+    private getFallThoughtAddress({ index, codeBlocks }: {
         index: string;
         codeBlocks: CodeBlocks[]
     }) {
         const codeBlock: ParsedOpcodes[] = codeBlocks[index].block;
-        if (codeBlock[0].opcode.isReal){
+        if (codeBlock[0].opcode.isReal) {
             const nextIndex = parseInt(index) + 1;
 
             const lastOpcode = codeBlock[codeBlock.length - 1].opcode;
-            
+
             const terminal: string[] = [
                 OpcodeMnemonic.STOP,
                 OpcodeMnemonic.RETURN,
+                OpcodeMnemonic.JUMP,
                 OpcodeMnemonic.REVERT
             ];
-            if (terminal.includes(lastOpcode.mnemonic)){
+
+            if (terminal.includes(lastOpcode.mnemonic)) {
                 return null;
             }
-            
+
             if (nextIndex < codeBlocks.length) {
                 const nextBlock = codeBlocks[nextIndex];
                 const address = nextBlock.startAddress.toString(16);
@@ -120,6 +118,6 @@ export class GetControlsFlowInteractor {
     }
 }
 
-export interface GraphCodeBlocks extends CodeBlocks{
+export interface GraphCodeBlocks extends CodeBlocks {
     calls: string[];
 }

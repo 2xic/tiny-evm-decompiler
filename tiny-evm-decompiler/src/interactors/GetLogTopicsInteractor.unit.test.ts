@@ -11,7 +11,7 @@ describe('GetLogTopicsInteractor', () => {
         const codeBlocks = new GetCodeBlocksInteractor().getCodeBlocks(opcodes)
         const response = await interactor.getLogTopics({
             codeBlocks,
-        })      
+        })
         expect(response).toHaveLength(1);
         expect(response[0].topic0).toMatchInlineSnapshot(`"102137596864728346170638619934991685713013445425038174730173252571921637618382"`)
         expect(response[0].topic1).toMatchInlineSnapshot(`"47849771978274583476054866359673822206892176540417600937783018660582038597090"`)

@@ -12,7 +12,12 @@
     "make": "electron-forge make",
     "cfg-hello": "npm run build && node dist/BuildCFG.js -c ../../example_contracts/hello_world.sol/HelloWorld.json && python3 PlotCFG.py",
     "cfg-event": "npm run build && node dist/BuildCFG.js -c ../../example_contracts/simple_event.sol/SimpleEvent.json && python3 PlotCFG.py",
-    "cfg-multiple-functions": "npm run build && node dist/BuildCFG.js -c ../../example_contracts/multiple_functions.sol/MultipleFunctions.json && python3 PlotCFG.py"
+    "cfg-multiple-functions": "npm run build && node dist/BuildCFG.js -c ../../example_contracts/multiple_functions.sol/MultipleFunctions.json && python3 PlotCFG.py",
+    "cfg-multiple-events": "npm run build && node dist/BuildCFG.js -c ../../example_contracts/multiple_simple_events.sol/MultipleSimpleEvents.json && python3 PlotCFG.py",
+
+    "log-hello": "npm run build && node dist/ExtractLog.js -c ../../example_contracts/hello_world.sol/HelloWorld.json",
+    "log-event": "npm run build && node dist/ExtractLog.js -c ../../example_contracts/simple_event.sol/SimpleEvent.json",
+    "log-multiple-events": "npm run build && node dist/ExtractLog.js -c ../../example_contracts/multiple_simple_events.sol/MultipleSimpleEvents.json"
   },
   "author": "",
   "license": "ISC",
