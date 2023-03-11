@@ -2,9 +2,8 @@ import graphviz
 import json
 
 cfg = None
-with open("debug_cfg.json", "r") as file:
+with open("cfg.json", "r") as file:
     cfg = json.load(file)
-
 
 def map_block(block_entry):
     address = hex(block_entry["offset"])

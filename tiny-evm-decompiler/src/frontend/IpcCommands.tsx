@@ -1,14 +1,9 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { CodeBlocks } from './interactors/GetCodeBlocksInteractor';
-import { ParsedOpcodes } from './interactors/GetOpcodesInteractor';
+import { CodeBlocks } from '../interactors/GetCodeBlocksInteractor';
+import { ParsedOpcodes } from '../interactors/GetOpcodesInteractor';
 import { electronAPI } from './IpcCommandsInteraface';
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { GraphCodeBlocks } from './interactors/GetControlsFlowInteractor';
-import { CreateVizEdge, CreateVizNode, options } from './helpers/CreateVizNode';
-//import vis from 'vis-network/declarations/index-legacy-bundle';
-//import vis from "vis-network/standalone/umd/vis-network";
-/**/
+import { GraphCodeBlocks } from '../interactors/GetControlsFlowInteractor';
+import { CreateVizEdge, CreateVizNode, options } from '../helpers/CreateVizNode';
 import vis from './vis.min.js';
 
 contextBridge.exposeInMainWorld("require", require);

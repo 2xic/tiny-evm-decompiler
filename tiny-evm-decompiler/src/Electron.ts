@@ -13,13 +13,13 @@ function createWindow() {
    win = new BrowserWindow({
       width: 800, height: 600,
       webPreferences: {
-         preload: path.join(__dirname, 'IpcCommands.js'),
+         preload: path.join(__dirname, '/frontend/IpcCommands.js'),
          nodeIntegration: true,
          contextIsolation: true,
       }
    })
    win.loadURL(url.format({
-      pathname: path.join(__dirname, 'index.html'),
+      pathname: path.join(__dirname, '/frontend/index.html'),
       protocol: 'file:',
       slashes: true
    }))

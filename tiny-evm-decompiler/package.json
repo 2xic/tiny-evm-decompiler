@@ -2,20 +2,23 @@
   "name": "tiny-evm-decompiler",
   "version": "1.0.0",
   "description": "",
-  "main": "./dist/main.js",
+  "main": "./dist/Electron.js",
   "scripts": {
     "test": "npm run build && jest",
-    "build": "tsc && cp src/index.html dist/index.html",
+    "build": "tsc && cp src/frontend/index.html dist/frontend/index.html && cp src/frontend/vis.min.js dist/frontend/vis.min.js",
     "start": "npm run build && electron-forge start",
     "package": "electron-forge package",
     "osx-build": "npm run make -- --platform darwin",
     "make": "electron-forge make",
-    "debug-cfg": "npm run build && node dist/debug_cfg.js && python3 debug_cfg.py"
+    "cfg-hello": "npm run build && node dist/BuildCFG.js -c ../../example_contracts/hello_world.sol/HelloWorld.json && python3 PlotCFG.py",
+    "cfg-event": "npm run build && node dist/BuildCFG.js -c ../../example_contracts/simple_event.sol/SimpleEvent.json && python3 PlotCFG.py",
+    "cfg-multiple-functions": "npm run build && node dist/BuildCFG.js -c ../../example_contracts/multiple_functions.sol/MultipleFunctions.json && python3 PlotCFG.py"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@types/jsdom": "^21.1.0",
+    "@types/node": "^18.15.0",
     "bignumber.js": "^9.0.2",
     "bun-types": "^0.5.7",
     "electron-squirrel-startup": "^1.0.0",
@@ -39,5 +42,11 @@
     "jsdom": "^21.1.0",
     "jsdom-global": "^3.0.2",
     "ts-jest": "^29.0.5"
+  },
+  "engines": {
+    "node": ">=18.5.0"
+  },
+  "volta": {
+    "node": "18.5.0"
   }
 }

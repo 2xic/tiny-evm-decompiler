@@ -1,7 +1,7 @@
 
 pragma solidity 0.8.13;
 
-contract EventsExample {
+contract SimpleEvent {
     event Transfer(address indexed _from, uint256 value);
 
     function transfer(uint256 _value) public {

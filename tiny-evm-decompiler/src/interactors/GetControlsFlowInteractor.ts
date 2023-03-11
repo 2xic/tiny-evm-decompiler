@@ -7,9 +7,13 @@
  */
 
 import { CodeBlocks } from "./GetCodeBlocksInteractor";
-import { Address, ExposedEvm, MnemonicParser, StackUnderflow, Wei } from 'tinyeth/dist/evm';
+import { Address, ExposedEvm, MnemonicParser, OpcodeMnemonic, StackUnderflow, Wei } from 'tinyeth/dist/evm';
 import BigNumber from 'bignumber.js';
 import { getClassFromTestContainer } from "tinyeth/dist/container/getClassFromTestContainer";
+import { ParsedOpcodes } from "./GetOpcodesInteractor";
+import { Logger } from "../helpers/Logger";
+
+const DEBUG = false;
 
 export class GetControlsFlowInteractor {
     public async getControlFlow({
@@ -18,20 +22,21 @@ export class GetControlsFlowInteractor {
         codeBlocks: CodeBlocks[]
     }): Promise<GraphCodeBlocks[]> {
         const mappingCodeBlocks: GraphCodeBlocks[] = [];
+        const logger = new Logger();
 
         for (const [index, codeblock] of Object.entries(codeBlocks)) {
             const calls: Set<string> = new Set([]);
             const evm = getClassFromTestContainer(ExposedEvm);
-            console.log('');
+            logger.log('');
             const code = (codeblock.block.filter((item) => {
                 return item.opcode.isReal;
             }).map((item) => {
-                console.log(
+                logger.log(
                     `0x${item.offset.toString(16)} ${item.opcode.mnemonic} ${item.opcode.arguments.join(' ')}`
                 )
                 return `${item.opcode.mnemonic} ${item.opcode.arguments.join(' ')}`
             }))
-            console.log('');
+            
             const mnemonic2Buffer = new MnemonicParser().parse({
                 script: code.join('\n')
             })
@@ -47,59 +52,35 @@ export class GetControlsFlowInteractor {
                     data: Buffer.from('', 'hex'),
                 },
             })
-            /*
-            evm.stack.push(new BigNumber(0));
-            evm.stack.push(new BigNumber(0));
-            evm.stack.push(new BigNumber(0));
-            evm.stack.push(new BigNumber(0));*/
 
-            const jumpInstructions = ['JUMP', 'JUMPI'];
+            const jumpInstructions: string[] = [OpcodeMnemonic.JUMP, OpcodeMnemonic.JUMPI];
             const execute = async () => {
                 try {
                     await evm.execute({
-                        // wait is this correct ? 
                         stopAtPc: mnemonic2Buffer.length - 1,
                     });
                     const opcode = evm.peekOpcode().opcode.mnemonic;
                     if (jumpInstructions.includes(opcode)) {
                         const jumpAddress = evm.stack.pop();
                         calls.add(jumpAddress.toString(16))
-                        if (opcode === 'JUMPI') {
-                            // The next code block will be the fall through 
+                        if (opcode === OpcodeMnemonic.JUMPI) {
                             calls.add(
                                 codeBlocks[parseInt(index) + 1].startAddress.toString(16)
                             )
                         }
                     }
                 } catch (err) {
-                    if (err instanceof StackUnderflow) {
-                        console.log(err);
-                        // okay
-                        execute();
-                    } else {
-                        console.log(err);
-                    }
+                    logger.log(err);
                 }
             }
             await execute();
 
-            console.log({
-                calls,
-            })
-            /**
-             * The current block is a data block, is it connected to the next
-             * or the previous node ? 
-             */
-            if (codeBlocks[index].block[0].opcode.isReal){
-                const nextIndex = parseInt(index) + 1;
-                if (nextIndex < codeBlocks.length) {
-                    const nextBlock = codeBlocks[nextIndex];
-                    const address = nextBlock.startAddress.toString(16);
-                    // The next code block will be the fall through 
-                    calls.add(
-                        address
-                    )
-                }
+            const fallThoughtAddress = this.getFallThoughtAddress({
+                index,
+                codeBlocks,
+            });
+            if (fallThoughtAddress){
+                calls.add(fallThoughtAddress)
             }
 
             mappingCodeBlocks.push({
@@ -109,6 +90,33 @@ export class GetControlsFlowInteractor {
         }
 
         return mappingCodeBlocks;
+    }
+
+    private getFallThoughtAddress({index, codeBlocks}: {
+        index: string;
+        codeBlocks: CodeBlocks[]
+    }) {
+        const codeBlock: ParsedOpcodes[] = codeBlocks[index].block;
+        if (codeBlock[0].opcode.isReal){
+            const nextIndex = parseInt(index) + 1;
+
+            const lastOpcode = codeBlock[codeBlock.length - 1].opcode;
+            
+            const terminal: string[] = [
+                OpcodeMnemonic.STOP,
+                OpcodeMnemonic.RETURN,
+                OpcodeMnemonic.REVERT
+            ];
+            if (terminal.includes(lastOpcode.mnemonic)){
+                return null;
+            }
+            
+            if (nextIndex < codeBlocks.length) {
+                const nextBlock = codeBlocks[nextIndex];
+                const address = nextBlock.startAddress.toString(16);
+                return address;
+            }
+        }
     }
 }
 
