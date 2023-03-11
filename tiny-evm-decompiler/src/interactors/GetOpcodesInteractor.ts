@@ -27,6 +27,7 @@ export class GetOpcodesInteractor {
         opcodes.push({
           offset: address,
           opcode: {
+            opcode: currentOpcode,
             mnemonic: `INVALID`,
             arguments: [],
             isReal: false,
@@ -40,6 +41,7 @@ export class GetOpcodesInteractor {
         opcodes.push({
           offset: address,
           opcode: {
+            opcode: currentOpcode,
             mnemonic: `DATA`,
             arguments: [`0x${currentOpcode.toString(16)}`],
             isReal: false,
@@ -61,6 +63,7 @@ export class GetOpcodesInteractor {
         opcodes.push({
           offset: address,
           opcode: {
+            opcode: currentOpcode,
             mnemonic: opcode.mnemonic,
             arguments: Array.from(opcodeArguments).map((item) => `0x${item.toString(16)}`),
             isReal: true,
@@ -89,11 +92,13 @@ export type ParsedOpcodes = {
 export interface FakeOpcode {
   mnemonic: string;
   arguments: unknown[];
+  opcode: number;
   isReal: boolean;
 }
 
 export interface RealOpcode {
   mnemonic: string;
+  opcode: number;
   arguments: unknown[];
   isReal: boolean;
 }
