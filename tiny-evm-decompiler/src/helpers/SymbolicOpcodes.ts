@@ -1,39 +1,58 @@
 import BigNumber from "bignumber.js";
 import { StackUnderflow } from "tinyeth";
 import { ParsedOpcodes } from "../interactors/GetOpcodesInteractor";
+import { getOpcodeArgument } from "./getOpcodeArgument";
 
 class SymbolicOpcode {
     constructor(
         private options: Options
     ) { }
 
-    public execute({ stack, opcode }: { stack: bigint[]; opcode: ParsedOpcodes }): bigint[] {
+    public execute({ stack, opcode }: { stack: bigint[]; opcode: ParsedOpcodes }): {
+        stack: bigint[];
+        output: null | bigint[]
+    } {
         if (this.options.execution) {
-            const output = this.options.execution({
+            const { stack: stackOutput, output } = this.options.execution({
                 stack,
                 opcode
             });
 
-            return output;
+            return {
+                stack: stackOutput,
+                output: output,
+            };
         } else {
+            const output: bigint[] = []
             for (let i = 0; i < this.options.consumes; i++) {
-                stack.pop();
+                output.push(stack.pop())
             }
             for (let i = 0; i < this.options.outputs; i++) {
                 stack.push(BigInt(0xdeadbeef));
             }
 
-            return stack;
+            return {
+                stack,
+                output: output,
+            };
         }
     }
 }
 
 export const SymbolicOpcodes: Record<number, SymbolicOpcode> = {
+    0x0: new SymbolicOpcode({
+        outputs: 0,
+        consumes: 0,
+    }),
     0x1: new SymbolicOpcode({
         outputs: 1,
         consumes: 2,
     }),
     0x3: new SymbolicOpcode({
+        outputs: 1,
+        consumes: 2,
+    }),
+    0x12: new SymbolicOpcode({
         outputs: 1,
         consumes: 2,
     }),
@@ -52,7 +71,10 @@ export const SymbolicOpcodes: Record<number, SymbolicOpcode> = {
 
             item.push(c);
 
-            return item;
+            return {
+                stack,
+                output: null,
+            };
         }
     }),
     0x1b: new SymbolicOpcode({
@@ -62,6 +84,10 @@ export const SymbolicOpcodes: Record<number, SymbolicOpcode> = {
     0x1c: new SymbolicOpcode({
         outputs: 1,
         consumes: 2,
+    }),
+    0x33: new SymbolicOpcode({
+        outputs: 1,
+        consumes: 0,
     }),
     0xf3: new SymbolicOpcode({
         outputs: 2,
@@ -78,34 +104,39 @@ export const SymbolicOpcodes: Record<number, SymbolicOpcode> = {
     // JUMP
     0x56: new SymbolicOpcode({
         outputs: 0,
-        // We need that
-        consumes: 0,
+        consumes: 1,
+    }),
+    // JUMPI
+    0x57: new SymbolicOpcode({
+        outputs: 0,
+        consumes: 2,
     }),
     // PUSH
     ...repeatOpcode(0x60, 0x7f, () => new SymbolicOpcode({
-        outputs: 0,
-        consumes: 1,
+        outputs: 1,
+        consumes: 0,
         execution: ({ stack, opcode }) => {
             const item = stack;
-            const argument = opcode.opcode.arguments.map((item) => {
-                if (!(typeof item === 'string')){
-                    throw new Error(`Bad argument type ${item}`)
-                }
-                return item.slice(2);//.toString(16);
-            }).join('')
+            const argument = getOpcodeArgument(opcode)
             stack.push(BigInt(`0x${argument}`));
 
-            return item;
+            return {
+                stack: item,
+                output: null,
+            };
         }
     })),
     // DUP
     ...repeatOpcode(0x80, 0x8f, (index) => new SymbolicOpcode({
-        outputs: 0,
+        outputs: 1,
         consumes: 1,
         execution: ({ stack }) => {
             const item = stack;
-            stack.push(stack[index - 1]);
-            return item;
+            stack.push(stack[stack.length - index]);
+            return {
+                stack: item,
+                output: null,
+            };
         }
     })),
     // SWAP
@@ -114,12 +145,32 @@ export const SymbolicOpcodes: Record<number, SymbolicOpcode> = {
         consumes: 1,
         execution: ({ stack }) => {
             const item = stack;
-            [stack[0], stack[index - 1]] = [stack[index - 1], stack[0]];
- 
-            // console.log(stack)
-            // console.log(index)
+            const lastStackItemIndex = stack.length - 1;
+            const swapStackItemIndex = lastStackItemIndex - index;
+            const first = stack[lastStackItemIndex];
+            const second = stack[swapStackItemIndex];
 
-            return item;
+            stack[lastStackItemIndex] = second;
+            stack[swapStackItemIndex] = first;
+
+            return {
+                stack: item,
+                output: null,
+            };
+        }
+    })),
+    // LOG
+    ...repeatOpcode(0xa0, 0xa4, (index) => new SymbolicOpcode({
+        outputs: 0,
+        consumes: 1 + index,
+        execution: ({stack}) => {
+            const logArguments = [...Array(index + 1).fill(0)].map(() => {
+                return stack.pop();
+            })
+            return {
+                stack,
+                output: logArguments,
+            }
         }
     })),
     0x52: new SymbolicOpcode({
@@ -154,10 +205,6 @@ export const SymbolicOpcodes: Record<number, SymbolicOpcode> = {
         outputs: 1,
         consumes: 1,
     }),
-    0x57: new SymbolicOpcode({
-        outputs: 0,
-        consumes: 2,
-    }),
     0x5b: new SymbolicOpcode({
         outputs: 0,
         consumes: 0,
@@ -185,5 +232,8 @@ function repeatOpcode(
 interface Options {
     consumes: number;
     outputs: number;
-    execution?: (options: { stack: bigint[]; opcode: ParsedOpcodes }) => bigint[]
+    execution?: (options: { stack: bigint[]; opcode: ParsedOpcodes }) => {
+        stack: bigint[];
+        output: null | bigint[]
+    }
 }

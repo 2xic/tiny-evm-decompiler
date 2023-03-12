@@ -15,6 +15,7 @@ describe('GetOpcodesInteractor', () => {
       ],
       "isReal": true,
       "mnemonic": "PUSH1",
+      "opcode": 96,
     },
   ],
   [
@@ -22,6 +23,7 @@ describe('GetOpcodesInteractor', () => {
       "arguments": [],
       "isReal": true,
       "mnemonic": "JUMP",
+      "opcode": 86,
     },
   ],
   [
@@ -31,6 +33,7 @@ describe('GetOpcodesInteractor', () => {
       ],
       "isReal": false,
       "mnemonic": "DATA",
+      "opcode": 1,
     },
   ],
   [
@@ -40,6 +43,7 @@ describe('GetOpcodesInteractor', () => {
       ],
       "isReal": false,
       "mnemonic": "DATA",
+      "opcode": 2,
     },
   ],
   [
@@ -49,6 +53,7 @@ describe('GetOpcodesInteractor', () => {
       ],
       "isReal": false,
       "mnemonic": "DATA",
+      "opcode": 3,
     },
   ],
 ]

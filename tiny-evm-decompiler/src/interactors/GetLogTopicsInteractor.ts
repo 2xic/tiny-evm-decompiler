@@ -2,6 +2,8 @@ import BigNumber from "bignumber.js";
 import { Address, ExposedEvm, getClassFromTestContainer, MnemonicParser, Wei } from "tinyeth";
 import { getCodeBlock } from "../helpers/getOpcodesFromMnemonic";
 import { CodeBlocks } from "./GetCodeBlocksInteractor";
+import { GetControlsFlowInteractor } from "./GetControlsFlowInteractor";
+import { ResolveOrphansInteractor } from "./ResolveOrphansInteractor";
 
 export class GetLogTopicsInteractor {
     public async getLogTopics({
@@ -9,55 +11,84 @@ export class GetLogTopicsInteractor {
     }: {
         codeBlocks: CodeBlocks[]
     }): Promise<LogTopics[]> {
-        const blocksOfInterest = codeBlocks.filter((item) => item.properties.length);
         const topics: LogTopics[] = [];
-        for (const codeblock of blocksOfInterest) {
-            const evm = getClassFromTestContainer(ExposedEvm);
-            const mnemonic2Buffer = getCodeBlock({ codeblock })
+        const interactor = new ResolveOrphansInteractor();
 
-            try {
-                evm.boot({
-                    program: mnemonic2Buffer,
-                    context: {
-                        nonce: 1,
-                        sender: new Address(),
-                        receiver: new Address(),
-                        gasLimit: new BigNumber(0),
-                        value: new Wei(new BigNumber(8)),
-                        data: Buffer.from('', 'hex'),
-                    },
+        interactor.on('log', ({ stack, opcode }) => {
+            if (opcode === 'LOG1') {
+                topics.push({
+                    offset: stack[stack.length - 3],
+                    size: stack[stack.length - 2],
+                    topic0: stack[stack.length - 1],
                 })
-    
-                await evm.execute({
-                    stopAtOpcodes: [0xa0, 0xa1, 0xa2, 0xa3, 0xa4]
+            } else if (opcode === 'LOG2') {
+                topics.push({
+                    offset: stack[stack.length - 4],
+                    size: stack[stack.length - 3],
+                    topic1: stack[stack.length - 2],
+                    topic0: stack[stack.length - 1],
                 })
-    
-                const opcode = evm.peekOpcode().opcodeNumber;
-                if (opcode == 0xa2) {
-                    topics.push({
-                        offset: evm.stack.pop(),
-                        size: evm.stack.pop(),
-                        topic1: evm.stack.pop(),
-                        topic0: evm.stack.pop(),
-                    })
-                } else {
-                    throw new Error('Not implemented');
-                }                
-            } catch(err){
-                console.log(err);
+            } else if (opcode === 'LOG3') {
+                topics.push({
+                    offset: stack[stack.length - 5],
+                    size: stack[stack.length - 4],
+                    topic2: stack[stack.length - 3],
+                    topic1: stack[stack.length - 2],
+                    topic0: stack[stack.length - 1],
+                })
+            } else if (opcode === 'LOG4') {
+                topics.push({
+                    offset: stack[stack.length - 6],
+                    size: stack[stack.length - 5],
+                    topic3: stack[stack.length - 4],
+                    topic2: stack[stack.length - 3],
+                    topic1: stack[stack.length - 2],
+                    topic0: stack[stack.length - 1],
+                })
             }
-
-        }
+        })
+        interactor.resolve({
+            codeBlocks: new GetControlsFlowInteractor().getControlFlow({
+                codeBlocks
+            })
+        })
 
         return topics;
     }
 }
 
-export interface Log2 {
-    topic0: BigNumber;
-    topic1: BigNumber;
-    offset: BigNumber;
-    size: BigNumber;
+export interface Log1 {
+    topic0: bigint;
+    offset: bigint;
+    size: bigint;
 }
 
-export type LogTopics = Log2;
+export interface Log2 {
+    topic0: bigint;
+    topic1: bigint;
+    offset: bigint;
+    size: bigint;
+}
+
+
+export interface Log3 {
+    topic0: bigint;
+    topic1: bigint;
+    topic2: bigint;
+    topic3: bigint;
+    offset: bigint;
+    size: bigint;
+}
+
+
+export interface Log4 {
+    topic0: bigint;
+    topic1: bigint;
+    topic2: bigint;
+    topic3: bigint;
+    topic4: bigint;
+    offset: bigint;
+    size: bigint;
+}
+
+export type LogTopics = Log4 | Log3 | Log2 | Log1;

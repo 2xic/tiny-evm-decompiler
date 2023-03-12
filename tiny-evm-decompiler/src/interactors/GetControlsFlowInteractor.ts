@@ -7,69 +7,39 @@
  */
 
 import { CodeBlocks } from "./GetCodeBlocksInteractor";
-import { Address, ExposedEvm, MnemonicParser, OpcodeMnemonic, StackUnderflow, Wei } from 'tinyeth/dist/evm';
-import BigNumber from 'bignumber.js';
-import { getClassFromTestContainer } from "tinyeth/dist/container/getClassFromTestContainer";
+import { OpcodeMnemonic } from 'tinyeth/dist/evm';
 import { ParsedOpcodes } from "./GetOpcodesInteractor";
 import { Logger } from "../helpers/Logger";
-import { getCodeBlock } from "../helpers/getOpcodesFromMnemonic";
-
-const DEBUG = false;
+import { getOpcodeArgument } from "../helpers/getOpcodeArgument";
 
 export class GetControlsFlowInteractor {
-    public async getControlFlow({
+    public getControlFlow({
         codeBlocks
     }: {
         codeBlocks: CodeBlocks[]
-    }): Promise<GraphCodeBlocks[]> {
+    }): GraphCodeBlocks[] {
         const mappingCodeBlocks: GraphCodeBlocks[] = [];
         const logger = new Logger();
 
         for (const [index, codeblock] of Object.entries(codeBlocks)) {
             const calls: Set<string> = new Set([]);
-            const evm = getClassFromTestContainer(ExposedEvm);
-            const mnemonic2Buffer = getCodeBlock({ codeblock })
-
-            // Hack to align the stack
-            for (let i = 0; i < 32; i++) {
-                evm.stack.push(new BigNumber('inf'))
-            }
-
-            evm.boot({
-                program: mnemonic2Buffer,
-                context: {
-                    nonce: 1,
-                    sender: new Address(),
-                    receiver: new Address(),
-                    gasLimit: new BigNumber(0),
-                    value: new Wei(new BigNumber(8)),
-                    data: Buffer.from('', 'hex'),
-                },
-            })
 
             const jumpInstructions: string[] = [OpcodeMnemonic.JUMP, OpcodeMnemonic.JUMPI];
-            const execute = async () => {
-                try {
-                    await evm.execute({
-                        stopAtPc: mnemonic2Buffer.length - 1,
-                    });
-                    const opcode = evm.peekOpcode().opcode.mnemonic;
-                    if (jumpInstructions.includes(opcode)) {
-                        const jumpAddress = evm.stack.pop();
-                        if (!jumpAddress.isNaN()) {
-                            calls.add(jumpAddress.toString(16))
-                        }
-                        if (opcode === OpcodeMnemonic.JUMPI) {
-                            calls.add(
-                                codeBlocks[parseInt(index) + 1].startAddress.toString(16)
-                            )
-                        }
+            codeblock.block.forEach((item, opcodeIndex) => {
+                if (jumpInstructions.includes(item.opcode.mnemonic)) {
+                    const prevOpcode = codeblock.block[opcodeIndex - 1];
+
+                    if (prevOpcode.opcode.mnemonic.includes(OpcodeMnemonic.PUSH)) {
+                        const argument = getOpcodeArgument(prevOpcode)
+                        calls.add(argument)
                     }
-                } catch (err) {
-                    logger.log(err);
+                    if (item.opcode.mnemonic === OpcodeMnemonic.JUMPI) {
+                        calls.add(
+                            codeBlocks[parseInt(index) + 1].startAddress.toString(16)
+                        )
+                    }
                 }
-            }
-            await execute();
+            });
 
             const fallThoughtAddress = this.getFallThoughtAddress({
                 index,

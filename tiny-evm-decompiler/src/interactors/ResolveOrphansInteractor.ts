@@ -1,16 +1,22 @@
 // Algorithm as described in https://arxiv.org/pdf/2103.09113.pdf
 
 import { OpcodeMnemonic } from "tinyeth";
+import { MyEmitter } from "../helpers/MyEmitter";
 import { SymbolStackExecution } from "../helpers/SymbolStackExecution";
 import { GraphCodeBlocks } from "./GetControlsFlowInteractor";
 
-export class ResolveOrphansInteractor {
+export class ResolveOrphansInteractor extends MyEmitter<{
+    log: {
+        stack: bigint[],
+        opcode: string
+    }
+}> {
     public resolve({
-        codeBlocks: bb
+        codeBlocks: inputCodeBlocks
     }: {
         codeBlocks: GraphCodeBlocks[]
     }): GraphCodeBlocks[] {
-        const codeBlocks = bb.map((item) => {
+        const codeBlocks = inputCodeBlocks.map((item) => {
             return {
                 ...item,
                 successors: [],
@@ -18,33 +24,42 @@ export class ResolveOrphansInteractor {
         })
         const visited: Record<string, boolean> = {};
         const stack = new SymbolStackExecution();
-        const queue: Array<[ExtendedCodeBlocks, SymbolStackExecution]> = []
+        const queue: Array<[ExtendedCodeBlocks, SymbolStackExecution, string | null]> = []
         queue.push([
             codeBlocks[0],
-            stack
+            stack,
+            null,
         ]);
 
         while (queue.length) {
-            const [block, stack] = queue.shift();
+            const [block, stack, prevBlock] = queue.shift();
+//            console.log(`${prevBlock} -> ${block.name}`)
             block.block.forEach((item) => {
                 stack.executeOpcode({
                     opcode: item,
                 })
+                if (stack.lastOutput && item.opcode.mnemonic.includes(OpcodeMnemonic.LOG)){
+                    this.emit('log', {
+                        stack: stack.lastOutput,
+                        opcode: item.opcode.mnemonic
+                    })
+                }
             });
 
             const lastOpcode = block.block[block.block.length - 1];
 
             if (lastOpcode.opcode.mnemonic === OpcodeMnemonic.JUMP) {
-                const next = stack.peek();
+                const next = stack.lastOutput[0];
                 const successorBlock = codeBlocks.find((item) => {
                     return item.startAddress === Number(next)
                 })
                 if (!successorBlock) {
-                    throw new Error(`Did not find the JUMP successorBlock ${next.toString(16)} from ${block.name}`);
-                }
-                block.successors.push(successorBlock);
-                if (!block.calls.includes(successorBlock.name)) {
-                    block.calls.push(successorBlock.name)
+                    console.error(`Did not find the JUMP successorBlock ${next.toString(16)} from ${block.name}`);
+                } else {
+                    block.successors.push(successorBlock);
+                    if (!block.calls.includes(successorBlock.name)) {
+                        block.calls.push(successorBlock.name)
+                    }
                 }
             }
 
@@ -60,27 +75,28 @@ export class ResolveOrphansInteractor {
                         visited[edge] = true;
                         queue.push([
                             successor,
-                            stack.clone()
+                            stack.clone(),
+                            block.name,
                         ])
                     }
                 });
             } else if (lastOpcode.opcode.mnemonic === OpcodeMnemonic.JUMP) {
-                const next = stack.peek();
+                const next = stack.lastOutput[0];
                 const successorBlock = codeBlocks.find((item) => {
                     return item.startAddress === Number(next)
                 })
 
                 if (!successorBlock) {
-                    throw new Error(`Did not find the successorBlock (${next.toString(16)})  from ${block.name}`);
-                }
-                stack.pop();
-
-                const edge = `${block.startAddress.toString()}${successorBlock.startAddress.toString()}${stack.raw()}`;
-                if (!visited[edge]) {
-                    queue.push([
-                        successorBlock,
-                        stack.clone()
-                    ])
+                    console.error(`Did not find the successorBlock (${next.toString(16)})  from ${block.name}`);
+                } else {
+                    const edge = `${block.startAddress.toString()}${successorBlock.startAddress.toString()}${stack.raw()}`;
+                    if (!visited[edge]) {
+                        queue.push([
+                            successorBlock,
+                            stack.clone(),
+                            block.name,
+                        ])
+                    }
                 }
             }
         }

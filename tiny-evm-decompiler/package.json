@@ -10,8 +10,9 @@
     "package": "electron-forge package",
     "osx-build": "npm run make -- --platform darwin",
     "make": "electron-forge make",
-    "ehtersolve-cfg-hello": "npm run build && node dist/BuildEtherSolveCFG.js -c ../../example_contracts/hello_world.sol/HelloWorld.json && python3 PlotCFG.py",
-    "ehtersolve-multiple-functions": "npm run build && node dist/BuildEtherSolveCFG.js -c ../../example_contracts/multiple_functions.sol/MultipleFunctions.json && python3 PlotCFG.py",
+    "ethersolve-cfg-hello": "npm run build && node dist/BuildEtherSolveCFG.js -c ../../example_contracts/hello_world.sol/HelloWorld.json && python3 PlotCFG.py",
+    "ethersolve-cfg-multiple-functions": "npm run build && node dist/BuildEtherSolveCFG.js -c ../../example_contracts/multiple_functions.sol/MultipleFunctions.json && python3 PlotCFG.py",
+    "ethersolve-cfg-event": "npm run build && node dist/BuildEtherSolveCFG.js -c ../../example_contracts/simple_event.sol/SimpleEvent.json && python3 PlotCFG.py",
     
     "cfg-hello": "npm run build && node dist/BuildCFG.js -c ../../example_contracts/hello_world.sol/HelloWorld.json && python3 PlotCFG.py",
     "cfg-event": "npm run build && node dist/BuildCFG.js -c ../../example_contracts/simple_event.sol/SimpleEvent.json && python3 PlotCFG.py",
