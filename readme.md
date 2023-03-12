@@ -1,4 +1,6 @@
+# Tiny Evm Decompiler
 Simple EVM decompiler written as an exercise, can create a simple CFG and extract LOG arguments.
+
 Uses a SymbolicStack like described in [EtherSolve: Computing an Accurate Control-Flow Graph from Ethereum Bytecode](https://arxiv.org/pdf/2103.09113.pdf)
 
 - See [notes](./notes.md) for recourses and some notes I found helpful while doing this.
