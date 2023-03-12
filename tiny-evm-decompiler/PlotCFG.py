@@ -1,6 +1,8 @@
 import graphviz
 import json
+import sys
 
+name = "cfg" if len(sys.argv) == 1 else sys.argv[1]
 cfg = None
 with open("cfg.json", "r") as file:
     cfg = json.load(file)
@@ -42,4 +44,4 @@ for i in cfg:
     for to_node in i["calls"]:
         print((from_node, to_node))
         dot.edge(from_node, to_node)
-dot.render('cfg')
+dot.render(name)

@@ -1,4 +1,3 @@
-import { OpCode } from "tinyeth/dist/evm/OpCode";
 import { CodeBlockType, ParsedOpcodes } from "./GetOpcodesInteractor";
 
 export class GetCodeBlocksInteractor {

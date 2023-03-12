@@ -1,5 +1,3 @@
-import BigNumber from "bignumber.js";
-import { StackUnderflow } from "tinyeth";
 import { ParsedOpcodes } from "../interactors/GetOpcodesInteractor";
 import { getOpcodeArgument } from "./getOpcodeArgument";
 

@@ -1,4 +1,3 @@
-//import { OpCode } from 'tinyeth/dist/evm/OpCode';
 import { OpcodeLookups, OpcodeMnemonic } from 'tinyeth/dist/';
 import { OpCode } from 'tinyeth/dist/evm/OpCode';
 

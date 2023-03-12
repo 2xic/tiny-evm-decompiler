@@ -17,8 +17,8 @@ describe('GetLogTopicsInteractor', () => {
          * Because the symbolic stack is not fully implemented you get the deadbeef
          */
         expect(response[0].topic0).toMatchInlineSnapshot(`3735928559n`)
-        if (!('topic1' in response[0])){
-            throw new Error('Wrong topic')
+        if (!('topic1' in response[0])) {
+            throw new Error('Something went wrong when trying to extract topics')
         }
         expect(response[0].topic1).toMatchInlineSnapshot(`2990629282966891838140932376749085414104752576181182852924263213638230371810n`)
         expect(response[0].offset).toMatchInlineSnapshot(`3735928559n`)
@@ -35,6 +35,5 @@ describe('GetLogTopicsInteractor', () => {
             codeBlocks,
         })
         expect(response).toHaveLength(2);
-
     })
 })

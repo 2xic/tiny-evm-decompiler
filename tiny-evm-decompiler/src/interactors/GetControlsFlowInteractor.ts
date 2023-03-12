@@ -1,11 +1,3 @@
-/**
- * Okay ,so we now have the blocks
- * We execute them in a simplistic EVM
- * Usually, we only care about the last argument before a branch instruction
- * We only care about the I/O on the stack, but I don't wanna reimplement this basic evm
- * So I will just reuse the tinyeth evm.
- */
-
 import { CodeBlocks } from "./GetCodeBlocksInteractor";
 import { OpcodeMnemonic } from 'tinyeth/dist/evm';
 import { ParsedOpcodes } from "./GetOpcodesInteractor";
