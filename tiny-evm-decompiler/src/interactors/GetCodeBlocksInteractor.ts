@@ -1,3 +1,4 @@
+import { OpcodeMnemonic } from "tinyeth";
 import { CodeBlockType, ParsedOpcodes } from "./GetOpcodesInteractor";
 
 export class GetCodeBlocksInteractor {
@@ -43,10 +44,12 @@ export class GetCodeBlocksInteractor {
         const merged = blocks.map((item): CodeBlocks => {
             const start = item[0].offset;
             const end = item[item.length - 1].offset + 1;
-            const properties: CodeBLockProperty[] = [];
+            const properties: Set<CodeBLockProperty> = new Set<CodeBLockProperty>();
             item.find((item) =>{
-                if (item.opcode.mnemonic.includes('LOG')){
-                    properties.push(CodeBLockProperty.HAS_LOG)
+                if (item.opcode.mnemonic.includes(OpcodeMnemonic.LOG)){
+                    properties.add(CodeBLockProperty.HAS_LOG)
+                } else if (item.opcode.mnemonic.includes(OpcodeMnemonic.JUMPDEST)){
+                    properties.add(CodeBLockProperty.JUMPDEST)
                 }
             })
 
@@ -55,7 +58,7 @@ export class GetCodeBlocksInteractor {
                 startAddress: start,
                 endAddress: end,
                 block: item,
-                properties,
+                properties: [...properties],
             };
         });
 
@@ -73,4 +76,5 @@ export interface CodeBlocks {
 
 export enum CodeBLockProperty {
     'HAS_LOG' = 'HAS_LOG',
+    'JUMPDEST' = 'JUMPDEST',
 }

@@ -38,3 +38,12 @@ Haven't read it, but looks interesting, and should probably be investigated.
 ## [MadMax: Analyzing the Out-of-Gas World of Smart Contracts](https://www.nevillegrech.com/assets/pdf/madmax-cacm.pdf)
 Haven't read it, but looks interesting, and should probably be investigated.
 
+
+## Removing the floating block
+[What is the cryptic part at the end of a solidity contract bytecode?](https://ethereum.stackexchange.com/questions/23525/what-is-the-cryptic-part-at-the-end-of-a-solidity-contract-bytecode)
+
+[Deconstructing a Solidity Contract — Part VI: The Metadata Hash](https://blog.openzeppelin.com/deconstructing-a-solidity-contract-part-vi-the-swarm-hash-70f069e22aef/)
+
+Basically the trick we can use is to check if the block has a JUMPDEST or not. 
+So if there is no JUMPDEST, and the block is not the first block, and is not fallthorugh block from JUMPI it could be removed since it's not reachable.
+

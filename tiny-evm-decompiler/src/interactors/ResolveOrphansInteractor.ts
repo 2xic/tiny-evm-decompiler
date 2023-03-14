@@ -3,6 +3,7 @@
 import { OpcodeMnemonic } from "tinyeth";
 import { MyEmitter } from "../helpers/MyEmitter";
 import { SymbolStackExecution } from "../helpers/SymbolStackExecution";
+import { CodeBLockProperty } from "./GetCodeBlocksInteractor";
 import { GraphCodeBlocks } from "./GetControlsFlowInteractor";
 
 export class ResolveOrphansInteractor extends MyEmitter<{
@@ -30,10 +31,14 @@ export class ResolveOrphansInteractor extends MyEmitter<{
             stack,
             null,
         ]);
+        const inputEdges: Record<string, string[]> = {};
+        codeBlocks.forEach((item) => {
+            inputEdges[item.name] = [];
+        });
 
         while (queue.length) {
-            const [block, stack, prevBlock] = queue.shift();
-//            console.log(`${prevBlock} -> ${block.name}`)
+            const [block, stack, _] = queue.shift();
+
             block.block.forEach((item) => {
                 stack.executeOpcode({
                     opcode: item,
@@ -60,6 +65,7 @@ export class ResolveOrphansInteractor extends MyEmitter<{
                     if (!block.calls.includes(successorBlock.name)) {
                         block.calls.push(successorBlock.name)
                     }
+                    inputEdges[successorBlock.name].push(block.name);
                 }
             }
 
@@ -79,6 +85,7 @@ export class ResolveOrphansInteractor extends MyEmitter<{
                             block.name,
                         ])
                     }
+                    inputEdges[successor.name].push(block.name);
                 });
             } else if (lastOpcode.opcode.mnemonic === OpcodeMnemonic.JUMP) {
                 const next = stack.lastOutput[0];
@@ -100,11 +107,19 @@ export class ResolveOrphansInteractor extends MyEmitter<{
                 }
             }
         }
+        
         return codeBlocks.map((item) => {
             return {
                 ...item,
                 successors: undefined,
             }
+        }).filter((item) => {
+            const isStartBlock = item.name === '0';
+            const canBeJumpedTo = isStartBlock || item.properties.includes(CodeBLockProperty.JUMPDEST);
+            const isJumpedTo = inputEdges[item.name].length;
+            const shouldBeIgnored = canBeJumpedTo || isJumpedTo;
+
+            return shouldBeIgnored;  
         });
     }
 }
