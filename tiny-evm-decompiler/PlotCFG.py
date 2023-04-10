@@ -11,20 +11,25 @@ def map_block(block_entry):
     address = hex(block_entry["offset"])
     mnemonic = block_entry["opcode"]["mnemonic"]
     opcode_arguments = block_entry["opcode"]["arguments"]
-    arguments = "0x" + "".join(list(map(lambda x: x[2:], opcode_arguments)))
+    arguments = ""
+    if len(opcode_arguments):
+        arguments = "0x" + "".join(list(map(lambda x: x[2:], opcode_arguments)))
     arguments += "\\l"
 
     return f"{address} {mnemonic} {arguments}"
 
 
 dot = graphviz.Digraph(comment='cfg', format='png')
+dot.attr(label="(Gray background means the block is part of the function dispatcher)", labelloc="t")
+
 for i in cfg:
     block_of_code = "".join(list(map(map_block, i["block"])))
-    print(i["name"])
-    #if "HAS_LOG" in i["properties"]:
-    #    dot.node(i["name"], block_of_code, color="red", shape="box", width="5")
-    #else:
-    dot.node(i["name"], block_of_code, shape="box")
+    print(i["name"], i["isPartOfDispatcher"])
+
+    if i["isPartOfDispatcher"]:
+        dot.node(i["name"], block_of_code, shape="box", fontcolor="black", fillcolor="#dbdbdb", style="filled")
+    else:
+        dot.node(i["name"], block_of_code, shape="box")
 
 for i in cfg:
     from_node = i["name"]
@@ -38,4 +43,5 @@ for i in cfg:
                 dot.edge(from_node, to_node, color="green")
         else:
             dot.edge(from_node, to_node)
+
 dot.render(name, cleanup=True)

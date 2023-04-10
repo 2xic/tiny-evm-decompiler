@@ -47,9 +47,13 @@ export class GetCodeBlocksInteractor {
             const properties: Set<CodeBLockProperty> = new Set<CodeBLockProperty>();
             item.find((item) =>{
                 if (item.opcode.mnemonic.includes(OpcodeMnemonic.LOG)){
-                    properties.add(CodeBLockProperty.HAS_LOG)
+                    properties.add(CodeBLockProperty.LOG)
                 } else if (item.opcode.mnemonic.includes(OpcodeMnemonic.JUMPDEST)){
                     properties.add(CodeBLockProperty.JUMPDEST)
+                } else if (item.opcode.mnemonic.includes(OpcodeMnemonic.RETURN)){
+                    properties.add(CodeBLockProperty.RETURN)
+                } else if (item.opcode.mnemonic.includes(OpcodeMnemonic.STOP)){
+                    properties.add(CodeBLockProperty.STOP)
                 }
             })
 
@@ -75,6 +79,8 @@ export interface CodeBlocks {
 }
 
 export enum CodeBLockProperty {
-    'HAS_LOG' = 'HAS_LOG',
+    'LOG' = 'LOG',
     'JUMPDEST' = 'JUMPDEST',
+    'RETURN' = 'RETURN',
+    'STOP' = 'STOP'
 }

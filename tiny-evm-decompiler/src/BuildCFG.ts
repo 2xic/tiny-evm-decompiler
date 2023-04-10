@@ -4,15 +4,19 @@ import { GetControlsFlowInteractor } from "./interactors/GetControlsFlowInteract
 import { GetOpcodesInteractor } from "./interactors/GetOpcodesInteractor";
 import fs from 'fs';
 import { getContractPath } from './helpers/getContractPath';
+import { GetGraphCodeBlockDispatcher } from './interactors/GetGraphCodeBlockDispatcher';
 const contract = getContractPath(__dirname);
 const opcodes = new GetOpcodesInteractor().getOpcodes({
     contract,
 })
 const contractCodeBlocks = new GetCodeBlocksInteractor().getCodeBlocks(opcodes);
+const contractGraphCodeBlocks =  new GetControlsFlowInteractor().getControlFlow({
+    codeBlocks: contractCodeBlocks
+});
 
 (async () => {
-    const results = await new GetControlsFlowInteractor().getControlFlow({
-        codeBlocks: contractCodeBlocks
+    const results = new GetGraphCodeBlockDispatcher().getDispatcherFlow({
+        graph: contractGraphCodeBlocks
     })
     fs.writeFileSync('cfg.json', JSON.stringify(results));
     fs.writeFileSync('opcodes.txt', contractCodeBlocks.map((item) => {

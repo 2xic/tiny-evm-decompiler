@@ -9,3 +9,5 @@ Uses a SymbolicStack like described in [EtherSolve: Computing an Accurate Contro
 
 - See [GetLogTopicsInteractor.unit.test.ts](./tiny-evm-decompiler/src/interactors/GetLogTopicsInteractor.unit.test.ts) fro the topic extraction example.
 
+### One example 
+![CFG example](./example_cfgs/HelloWorld.png)

@@ -47,3 +47,12 @@ Haven't read it, but looks interesting, and should probably be investigated.
 Basically the trick we can use is to check if the block has a JUMPDEST or not. 
 So if there is no JUMPDEST, and the block is not the first block, and is not fallthorugh block from JUMPI it could be removed since it's not reachable.
 
+## Handling the dispatcher
+- You can see that the dispatcher is linear. Any block with a offset lower than the first block of RETURN / STOP will be a dispatcher.
+- I also got this [hint](https://github.com/ethereum/solidity/blob/0aa85153e56ea6effbf37d6ddde0e0946d6937ab/libsolidity/codegen/ContractCompiler.cpp#L412) from [Tal](https://github.com/thevaizman)
+
+
+I also found this paper (only partially looked at it), might be worth exploring [STAN: Towards Describing Bytecodes of Smart Contract](https://arxiv.org/pdf/2007.09696.pdf)
+
+*TODO* need to look at some of the output, part of the dispatcher output does not make sense (form multiple functions, but might be some optimization). 
+
