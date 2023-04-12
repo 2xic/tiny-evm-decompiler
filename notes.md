@@ -26,6 +26,11 @@ Haven't watched the talk, but looks interesting, and should probably be investig
 
 [Rattle – an Ethereum EVM binary analysis framework](https://blog.trailofbits.com/2018/09/06/rattle-an-ethereum-evm-binary-analysis-framework/)
 
+### Single Static Assignment form
+- Makes the code more readable 
+- https://www.cs.cmu.edu/~fp/courses/15411-f08/lectures/09-ssa.pdf
+- References https://pp.info.uni-karlsruhe.de/uploads/publikationen/braun13cc.pdf which seems good
+
 # [Porosity: A Decompiler For Blockchain-Based Smart Contracts Bytecode](https://media.defcon.org/DEF%20CON%2025/DEF%20CON%2025%20presentations/DEF%20CON%2025%20-%20Matt-Suiche-Porosity-Decompiling-Ethereum-Smart-Contracts-WP.pdf)
 Took a quick glance of it, looks like there are some tips and tricks here.
 

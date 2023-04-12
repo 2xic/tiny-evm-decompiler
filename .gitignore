@@ -9,3 +9,4 @@ debug_opcodes.txt
 debug_cfg.json
 opcodes.txt
 cfg.json
+ssa.json

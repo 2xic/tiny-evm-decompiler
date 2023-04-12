@@ -38,9 +38,9 @@ for i in cfg:
     for to_node in i["calls"]:
         if is_jumpi:
             if hex(i["endAddress"]) == "0x" + to_node:
-                dot.edge(from_node, to_node, color="red")
+                dot.edge(from_node, to_node, color="red", label="f")
             else:
-                dot.edge(from_node, to_node, color="green")
+                dot.edge(from_node, to_node, color="green", label="t")
         else:
             dot.edge(from_node, to_node)
 
