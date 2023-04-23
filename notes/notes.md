@@ -3,6 +3,13 @@ Discusses the part of the CFG that is the most challenging, namely the handling 
 So the way they do it is having a symbolic stack execution. Which only deals with PUSH, DUP, and SWAP. All other opcodes dealing with the stack is only pushing unknown to the stack.
 For instance `ADD` is not fully implemented, but instead consumes two items, and add a `UNKNOWN` item to the stack.
 
+# [Elipmoc: Advanced Decompilation of Ethereum Smart Contracts](https://yanniss.github.io/elipmoc-oopsla22.pdf)
+*TODO, evolution of gigahorse form the same author*
+
+[Presentation](https://www.youtube.com/watch?v=sUtiJHXL4Zs)
+
+[Video](https://dedaub.com/blog/elipmoc-advanced-decompilation-of-ethereum-smart-contracts)
+
 # [Gigahorse: Thorough, Declarative Decompilation ofSmart Contracts](https://yanniss.github.io/gigahorse-icse19.pdf)
 *In the abstract they mention they are one of the most precise and complete deocompilers*.
 What does Gigahore do ? 
@@ -21,8 +28,10 @@ The challenging part is of course to identify the private functions, this is mor
 # [Building reliable EVM disassemblers](https://karmacoma.notion.site/Building-reliable-EVM-disassemblers-ecf689d965cc4ffc9c3b2e34f4227b46)
 Great article on some pitfalls one can hit when writing a dissambler, and on the importance of dissamble should be possible to assemble.
 
+They have also created a cool article on the [dispatcher](https://karmacoma.notion.site/Building-an-EVM-from-scratch-part-3-calldata-and-the-function-dispatcher-83e82ea0e02d43cfb60c0cc563729339)
+
 # [recon 2018 - Rattle ](https://www.trailofbits.com/documents/RattleRecon.pdf)
-Haven't watched the talk, but looks interesting, and should probably be investigated.
+Haven't [watched](https://www.youtube.com/watch?v=SI_clfnBZmE) the talk, but looks interesting, and should probably be investigated.
 
 [Rattle – an Ethereum EVM binary analysis framework](https://blog.trailofbits.com/2018/09/06/rattle-an-ethereum-evm-binary-analysis-framework/)
 
@@ -43,7 +52,6 @@ Haven't read it, but looks interesting, and should probably be investigated.
 ## [MadMax: Analyzing the Out-of-Gas World of Smart Contracts](https://www.nevillegrech.com/assets/pdf/madmax-cacm.pdf)
 Haven't read it, but looks interesting, and should probably be investigated.
 
-
 ## Removing the floating block
 [What is the cryptic part at the end of a solidity contract bytecode?](https://ethereum.stackexchange.com/questions/23525/what-is-the-cryptic-part-at-the-end-of-a-solidity-contract-bytecode)
 
@@ -60,4 +68,3 @@ So if there is no JUMPDEST, and the block is not the first block, and is not fal
 I also found this paper (only partially looked at it), might be worth exploring [STAN: Towards Describing Bytecodes of Smart Contract](https://arxiv.org/pdf/2007.09696.pdf)
 
 *TODO* need to look at some of the output, part of the dispatcher output does not make sense (form multiple functions, but might be some optimization). 
-
