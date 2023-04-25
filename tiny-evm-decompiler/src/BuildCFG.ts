@@ -4,7 +4,7 @@ import { GetControlsFlowInteractor } from "./interactors/GetControlsFlowInteract
 import { GetOpcodesInteractor } from "./interactors/GetOpcodesInteractor";
 import fs from 'fs';
 import { getContractPath } from './helpers/getContractPath';
-import { GetGraphCodeBlockDispatcher } from './interactors/GetGraphCodeBlockDispatcher';
+import { GetGraphCodeBlockDispatcher } from './interactors/dispatcher/GetGraphCodeBlockDispatcher';
 const contract = getContractPath(__dirname);
 const opcodes = new GetOpcodesInteractor().getOpcodes({
     contract,

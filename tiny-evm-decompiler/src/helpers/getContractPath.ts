@@ -2,7 +2,7 @@ import { parseArgs } from "node:util";
 import path from 'path';
 import fs from 'fs';
 
-export function getContractPath(dirname: string) {
+export function getContractPath(dirname: string): Buffer {
     const options = {
         contract: {
             type: "string",
@@ -21,6 +21,6 @@ export function getContractPath(dirname: string) {
     }
     const absContractPath = path.join(dirname, contractPath);
     // assumes build from forge
-    const contract = JSON.parse(fs.readFileSync(absContractPath).toString('utf-8'))["deployedBytecode"]["object"];
-    return contract;
+    const contract = JSON.parse(fs.readFileSync(absContractPath).toString('utf-8'))["deployedBytecode"]["object"].replace('0x', '');
+    return Buffer.from(contract, 'hex');
 }

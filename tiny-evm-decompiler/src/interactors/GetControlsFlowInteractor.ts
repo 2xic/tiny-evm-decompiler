@@ -11,7 +11,6 @@ export class GetControlsFlowInteractor {
         codeBlocks: CodeBlocks[]
     }): GraphCodeBlocks[] {
         const mappingCodeBlocks: GraphCodeBlocks[] = [];
-        const logger = new Logger();
 
         for (const [index, codeblock] of Object.entries(codeBlocks)) {
             const calls: Set<string> = new Set([]);

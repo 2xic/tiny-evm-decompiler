@@ -13,7 +13,7 @@ describe('SymbolStackExecution', () => {
             `
         })
             const opcodes = new GetOpcodesInteractor().getOpcodes({
-            contract: mnemonic2Buffer.toString('hex')
+            contract: mnemonic2Buffer
         })
         opcodes.forEach((opcode) => {
             stack.executeOpcode({
@@ -42,7 +42,7 @@ describe('SymbolStackExecution', () => {
             `
         })
             const opcodes = new GetOpcodesInteractor().getOpcodes({
-            contract: mnemonic2Buffer.toString('hex')
+            contract: mnemonic2Buffer
         })
         opcodes.forEach((opcode) => {
             stack.executeOpcode({
@@ -79,7 +79,7 @@ describe('SymbolStackExecution', () => {
             `
         })
             const opcodes = new GetOpcodesInteractor().getOpcodes({
-            contract: mnemonic2Buffer.toString('hex')
+            contract: mnemonic2Buffer
         })
         opcodes.forEach((opcode) => {
             stack.executeOpcode({
@@ -113,7 +113,7 @@ describe('SymbolStackExecution', () => {
             `
         })
             const opcodes = new GetOpcodesInteractor().getOpcodes({
-            contract: mnemonic2Buffer.toString('hex')
+            contract: mnemonic2Buffer
         })
         opcodes.forEach((opcode) => {
             stack.executeOpcode({
@@ -139,7 +139,7 @@ describe('SymbolStackExecution', () => {
             `
         })
             const opcodes = new GetOpcodesInteractor().getOpcodes({
-            contract: mnemonic2Buffer.toString('hex')
+            contract: mnemonic2Buffer
         })
         opcodes.forEach((opcode) => {
             stack.executeOpcode({
@@ -168,7 +168,7 @@ describe('SymbolStackExecution', () => {
             `
         })
             const opcodes = new GetOpcodesInteractor().getOpcodes({
-            contract: mnemonic2Buffer.toString('hex')
+            contract: mnemonic2Buffer
         })
         opcodes.forEach((opcode) => {
             stack.executeOpcode({

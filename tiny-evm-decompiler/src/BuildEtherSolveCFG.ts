@@ -5,7 +5,8 @@ import { GetOpcodesInteractor } from "./interactors/GetOpcodesInteractor";
 import fs from 'fs';
 import { getContractPath } from './helpers/getContractPath';
 import { ResolveOrphansInteractor } from './interactors/ResolveOrphansInteractor';
-import { GetGraphCodeBlockDispatcher } from './interactors/GetGraphCodeBlockDispatcher';
+import { GetGraphCodeBlockDispatcher } from './interactors/dispatcher/GetGraphCodeBlockDispatcher';
+import { GetContractFunctionsInteractor } from './interactors/dispatcher/GetContractFunctionsInteractor';
 
 const contract = getContractPath(__dirname);
 const opcodes = new GetOpcodesInteractor().getOpcodes({
@@ -24,11 +25,22 @@ const graphBlocks: GraphCodeBlocks[] = new ResolveOrphansInteractor().resolve({
 });
 
 (async () => {
-    const results = new GetGraphCodeBlockDispatcher().getDispatcherFlow({
+    const { graph } = new GetGraphCodeBlockDispatcher().getDispatcherFlow({
         graph: graphBlocks
     })
+    console.log(typeof contract)
+    console.log(contract)
+    const functions = await new GetContractFunctionsInteractor().getFunctions({
+        contract,
+    })
+    console.log({
+        functions
+    })
 
-    fs.writeFileSync('cfg.json', JSON.stringify(results));
+    fs.writeFileSync('cfg.json', JSON.stringify({
+        graph,
+        functions
+    }));
     fs.writeFileSync('opcodes.txt', contractCodeBlocks.map((item) => {
         return item.block.map((item) => `0x${item.offset.toString(16)} ${item.opcode.mnemonic} ${item.opcode.arguments.join(' ')}`).join('\n')
     }).join('\n'))

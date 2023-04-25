@@ -18,20 +18,41 @@ def map_block(block_entry):
 
     return f"{address} {mnemonic} {arguments}"
 
+def create_function_table():
+    table = [
+        "{",
+        "Functions"
+    ]
+    for i in cfg["functions"]:
+        if 1 < len(table):
+            table.append("|")
+        table.append(str(i["value"]))
+    table.append("}")
+    print(table)
+    return " ".join(table)
 
 dot = graphviz.Digraph(comment='cfg', format='png')
+if len(cfg["functions"]):
+    dot.node(
+        "Node A", 
+        shape="record", 
+        label=create_function_table(),
+        pos='0, 0'
+    )
 dot.attr(label="(Gray background means the block is part of the function dispatcher)", labelloc="t")
+graph = cfg["graph"]
 
-for i in cfg:
+for i in graph:
     block_of_code = "".join(list(map(map_block, i["block"])))
-    print(i["name"], i["isPartOfDispatcher"])
+    is_path_of_dispatcher = i.get("isPartOfDispatcher", False)
+    print(i["name"], is_path_of_dispatcher)
 
-    if i["isPartOfDispatcher"]:
+    if is_path_of_dispatcher:
         dot.node(i["name"], block_of_code, shape="box", fontcolor="black", fillcolor="#dbdbdb", style="filled")
     else:
         dot.node(i["name"], block_of_code, shape="box")
 
-for i in cfg:
+for i in graph:
     from_node = i["name"]
     # TODO: Should instead have this metadata in the json output
     is_jumpi = (2 == len(i["calls"]))
@@ -43,5 +64,6 @@ for i in cfg:
                 dot.edge(from_node, to_node, color="green", label="t")
         else:
             dot.edge(from_node, to_node)
+
 
 dot.render(name, cleanup=True)

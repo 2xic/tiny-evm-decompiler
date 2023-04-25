@@ -5,7 +5,7 @@ import { GetOpcodesInteractor } from "./interactors/GetOpcodesInteractor";
 import fs from 'fs';
 import { getContractPath } from './helpers/getContractPath';
 import { ResolveOrphansInteractor } from './interactors/ResolveOrphansInteractor';
-import { GetGraphCodeBlockDispatcher } from './interactors/GetGraphCodeBlockDispatcher';
+import { GetGraphCodeBlockDispatcher } from './interactors/dispatcher/GetGraphCodeBlockDispatcher';
 import { GetSsaInteractor } from './interactors/ssa/GetSsaInteractor';
 
 const contract = getContractPath(__dirname);

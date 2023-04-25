@@ -4,7 +4,7 @@ describe('GetOpcodesInteractor', () => {
     it('should not be fooled by data', () => {
         const interactor = new GetOpcodesInteractor();
         const response = interactor.getOpcodes({
-            contract: '600056010203'
+            contract: Buffer.from('600056010203', 'hex')
         })      
         expect(response.map((item) => [item.opcode])).toMatchInlineSnapshot(`
 [

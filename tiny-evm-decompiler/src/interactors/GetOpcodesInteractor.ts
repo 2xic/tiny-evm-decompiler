@@ -5,16 +5,15 @@ export class GetOpcodesInteractor {
   public getOpcodes({
     contract
   }: {
-    contract: string
+    contract: Buffer
   }): ParsedOpcodes[] {
-    let contractBuffer = Buffer.from(contract.replace('0x', ''), 'hex')
     const opcodes: ParsedOpcodes[] = [];
     let address = 0;
     let isReadingCode = true;
     let codeBlockType = CodeBlockType.START;
 
-    while (contractBuffer.length) {
-      const currentOpcode = contractBuffer[0];
+    while (contract.length) {
+      const currentOpcode = contract[0];
       const opcode: OpCode | undefined = OpcodeLookups[currentOpcode];
 
       if (opcode?.mnemonic === OpcodeMnemonic.JUMPDEST) {
@@ -34,7 +33,7 @@ export class GetOpcodesInteractor {
           codeBlockType: CodeBlockType.INVALID,
           value: currentOpcode,
         });
-        contractBuffer = contractBuffer.slice(1);
+        contract = contract.slice(1);
         address += 1;
       } else if (!isReadingCode) {
         opcodes.push({
@@ -48,7 +47,7 @@ export class GetOpcodesInteractor {
           codeBlockType: CodeBlockType.DATA,
           value: currentOpcode,
         });
-        contractBuffer = contractBuffer.slice(1);
+        contract = contract.slice(1);
         address += 1;
       } else {
         if (opcode.isTerminating) {
@@ -58,7 +57,7 @@ export class GetOpcodesInteractor {
           codeBlockType = CodeBlockType.END
         }
 
-        const opcodeArguments = contractBuffer.slice(1, opcode.length);
+        const opcodeArguments = contract.slice(1, opcode.length);
         opcodes.push({
           offset: address,
           opcode: {
@@ -70,7 +69,7 @@ export class GetOpcodesInteractor {
           value: currentOpcode,
           codeBlockType,
         });
-        contractBuffer = contractBuffer.slice(opcode.length);
+        contract = contract.slice(opcode.length);
         address += opcode.length;
       }
 
