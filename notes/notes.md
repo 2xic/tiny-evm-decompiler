@@ -6,6 +6,29 @@ For instance `ADD` is not fully implemented, but instead consumes two items, and
 # [Elipmoc: Advanced Decompilation of Ethereum Smart Contracts](https://yanniss.github.io/elipmoc-oopsla22.pdf)
 *TODO, evolution of gigahorse form the same author*
 
+Did a quick read:
+
+Some keywords:
+- Elipmoc is compile backwards ...
+- Evolution of gigahorse and [panoramix](https://github.com/palkeo/panoramix)
+- 99.5% operands decompiler rate over a 62.8% for Gigahorse, and much greater coverage over [panoramix](https://github.com/palkeo/panoramix)
+- [panoramix](https://github.com/palkeo/panoramix is actually the most used decompiler, it's used in etherscan!!
+
+The compilers improves on "Transactional Context Sensitivity", "Scalable, context & path-sensitive function reconstruction", 
+Local analysis, whole-contract analysis, and transactional sensitivity is sent into function reconstructions which is based on function boundary interference, control flow normalization, function argument interference which is then translated into RTL ( *what is RTL ?* ).
+
+Detecting a private function empirically is found by seeing if the "private function" is called from multiple call sites and that is has function like characteristics. I.e return address is passed into the function, and returns some value, and that the function returns by jumping to the return address. 
+- There are a few more characteristics mentioned on page 11
+
+TODO
+-> Look more at "Function Argument Inference" Section 5.3
+-> 
+
+
+They also reference the papers
+-> [Ethainter: A Smart Contract Security Analyzer for Composite Vulnerabilities](https://yanniss.github.io/ethainter-pldi20.pdf)
+-> [Gigahorse: Thorough, Declarative Decompilation of Smart Contracts](https://ieeexplore.ieee.org/document/8811905)
+
 [Presentation](https://www.youtube.com/watch?v=sUtiJHXL4Zs)
 
 [Video](https://dedaub.com/blog/elipmoc-advanced-decompilation-of-ethereum-smart-contracts)
