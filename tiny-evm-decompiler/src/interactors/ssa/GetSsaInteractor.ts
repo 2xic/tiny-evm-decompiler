@@ -3,7 +3,10 @@ import { GraphCodeBlocks } from "../GetControlsFlowInteractor";
 import { StackValueRegister } from "./StackValueRegister";
 import { OpCode } from "tinyeth/dist/evm/OpCode";
 import { OpcodeMnemonic } from "tinyeth";
-
+/**
+ * Reading part of the rattle source code, this looks wrong
+ * 
+ */
 export class GetSsaInteractor {
     public getSSA({ graph }: { graph: GraphCodeBlocks[] }): SSABlock[] {
         /**

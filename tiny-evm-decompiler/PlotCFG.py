@@ -1,6 +1,7 @@
 import graphviz
 import json
 import sys
+from Get4ByteName import find_signature
 
 name = "cfg" if len(sys.argv) == 1 else sys.argv[1]
 cfg = None
@@ -26,7 +27,11 @@ def create_function_table():
     for i in cfg["functions"]:
         if 1 < len(table):
             table.append("|")
-        table.append(str(i["value"]))
+        signature = find_signature(str(i["value"]))
+        if "raw" in signature:
+            table.append(signature["raw"])
+        else:
+            table.append(signature["text_signature"])
     table.append("}")
     print(table)
     return " ".join(table)

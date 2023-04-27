@@ -30,6 +30,7 @@ They also reference the papers
 -> [Gigahorse: Thorough, Declarative Decompilation of Smart Contracts](https://ieeexplore.ieee.org/document/8811905)
 
 [Presentation](https://www.youtube.com/watch?v=sUtiJHXL4Zs)
+-> Seems like the source is the "same" as [gigahorse](https://github.com/nevillegrech/gigahorse-toolchain)
 
 [Video](https://dedaub.com/blog/elipmoc-advanced-decompilation-of-ethereum-smart-contracts)
 
@@ -62,6 +63,12 @@ Haven't [watched](https://www.youtube.com/watch?v=SI_clfnBZmE) the talk, but loo
 - Makes the code more readable 
 - https://www.cs.cmu.edu/~fp/courses/15411-f08/lectures/09-ssa.pdf
 - References https://pp.info.uni-karlsruhe.de/uploads/publikationen/braun13cc.pdf which seems good
+
+### Source code
+-> They have `hashes.py` full of mapping of 4bytes to text signatures. 
+-> `evmasm.py` -> wrapper around `pyevmasm`
+-> 
+
 
 # [Porosity: A Decompiler For Blockchain-Based Smart Contracts Bytecode](https://media.defcon.org/DEF%20CON%2025/DEF%20CON%2025%20presentations/DEF%20CON%2025%20-%20Matt-Suiche-Porosity-Decompiling-Ethereum-Smart-Contracts-WP.pdf)
 Took a quick glance of it, looks like there are some tips and tricks here.

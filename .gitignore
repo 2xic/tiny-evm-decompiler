@@ -11,3 +11,5 @@ opcodes.txt
 cfg.json
 ssa.json
 functions.json
+.cache
+*.pyc
