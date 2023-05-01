@@ -60,14 +60,16 @@ Haven't [watched](https://www.youtube.com/watch?v=SI_clfnBZmE) the talk, but loo
 [Rattle – an Ethereum EVM binary analysis framework](https://blog.trailofbits.com/2018/09/06/rattle-an-ethereum-evm-binary-analysis-framework/)
 
 ### Single Static Assignment form
-- Makes the code more readable 
+- Makes the code more readable by optimizing out "uninformative" opcodes
 - https://www.cs.cmu.edu/~fp/courses/15411-f08/lectures/09-ssa.pdf
 - References https://pp.info.uni-karlsruhe.de/uploads/publikationen/braun13cc.pdf which seems good
+- Presentation https://www.ics.uci.edu/~yeouln/course/ssa.pdf also looks quite good
 
 ### Source code
+-> Does not look like they actually execute any of the opcodes, they only run static analysis.
 -> They have `hashes.py` full of mapping of 4bytes to text signatures. 
 -> `evmasm.py` -> wrapper around `pyevmasm`
--> 
+-> The magic happens in `ssa.py` and `recover.py`
 
 
 # [Porosity: A Decompiler For Blockchain-Based Smart Contracts Bytecode](https://media.defcon.org/DEF%20CON%2025/DEF%20CON%2025%20presentations/DEF%20CON%2025%20-%20Matt-Suiche-Porosity-Decompiling-Ethereum-Smart-Contracts-WP.pdf)

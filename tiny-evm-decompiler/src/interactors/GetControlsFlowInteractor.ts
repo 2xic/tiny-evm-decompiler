@@ -10,6 +10,7 @@ export class GetControlsFlowInteractor {
     }: {
         codeBlocks: CodeBlocks[]
     }): GraphCodeBlocks[] {
+        const mappingIncoming: Record<string, string[] | undefined> = {}
         const mappingCodeBlocks: GraphCodeBlocks[] = [];
 
         for (const [index, codeblock] of Object.entries(codeBlocks)) {
@@ -32,6 +33,7 @@ export class GetControlsFlowInteractor {
                 }
             });
 
+
             const fallThoughtAddress = this.getFallThoughtAddress({
                 index,
                 codeBlocks,
@@ -40,13 +42,26 @@ export class GetControlsFlowInteractor {
                 calls.add(fallThoughtAddress)
             }
 
+            const normalizedCalls = [...calls].map((item) => parseInt(item, 16).toString(16))
+
+            normalizedCalls.forEach((item) => {
+                mappingIncoming[item] = mappingIncoming[item] || [];
+                mappingIncoming[item].push(codeblock.name)
+            })
+
             mappingCodeBlocks.push({
                 ...codeblock,
-                calls: [...calls].map((item) => parseInt(item, 16).toString(16)),
+                calls: normalizedCalls,
+                incoming: [],
             })
         }
 
-        return mappingCodeBlocks;
+        return mappingCodeBlocks.map((item) => {
+            return {
+                ...item,
+                incoming: mappingIncoming[item.name] || []
+            }
+        })
     }
 
     private getFallThoughtAddress({ index, codeBlocks }: {
@@ -81,4 +96,5 @@ export class GetControlsFlowInteractor {
 
 export interface GraphCodeBlocks extends CodeBlocks {
     calls: string[];
+    incoming: string[];
 }

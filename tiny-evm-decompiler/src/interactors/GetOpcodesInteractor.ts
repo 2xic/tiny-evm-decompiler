@@ -90,7 +90,7 @@ export type ParsedOpcodes = {
 
 export interface FakeOpcode {
   mnemonic: string;
-  arguments: string | Array<string>;
+  arguments: string;
   opcode: number;
   isReal: boolean;
 }
@@ -98,7 +98,7 @@ export interface FakeOpcode {
 export interface RealOpcode {
   mnemonic: string;
   opcode: number;
-  arguments: string | Array<string>;
+  arguments: string;
   isReal: boolean;
 }
 
