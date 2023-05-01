@@ -25,8 +25,21 @@ const graphBlocks: GraphCodeBlocks[] = new ResolveOrphansInteractor().resolve({
 });
 
 (async () => {
-    const results = new GetSsaInteractor().getSSA({
+    const { graph } = new GetGraphCodeBlockDispatcher().getDispatcherFlow({
         graph: graphBlocks
     })
-    fs.writeFileSync('ssa.json', JSON.stringify(results));
+    const results = new GetSsaInteractor().getSSA({
+        graph: graphBlocks
+    });
+    const connectedGraphs = results.map((item) => {
+        const graphEdges = graph.find((item2) => {
+            return item2.name == item.name
+        })
+        return {
+            ...item,
+            calls: graphEdges.calls,
+            endAddress: graphEdges.endAddress,
+        }
+    })
+    fs.writeFileSync('ssa.json', JSON.stringify(connectedGraphs));
 })()

@@ -31,7 +31,7 @@ ipcRenderer.on('contractOpcodes', (_, data) => {
         opcode.innerHTML = entry.opcode.mnemonic;
 
         const opcode_arguments = document.createElement("td");
-        opcode_arguments.innerHTML = entry.opcode.arguments.join(' ');
+        //opcode_arguments.innerHTML = entry.opcode.arguments;
 
         row.appendChild(address);
         row.appendChild(opcode);
@@ -85,7 +85,7 @@ ipcRenderer.on('contractGraphBlocks', (_, rawResponse) => {
         nodes.push(CreateVizNode({
             id: nodeId,
             code: item.block.map((item) => {
-                return `0x${item.offset.toString(16)} ${item.opcode.mnemonic} ${item.opcode.arguments.join(' ')}`
+                return `0x${item.offset.toString(16)} ${item.opcode.mnemonic} ${item.opcode.arguments}`
             }).join('\n')
         }));
         item.calls.forEach((id) => {

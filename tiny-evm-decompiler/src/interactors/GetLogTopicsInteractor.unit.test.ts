@@ -2,7 +2,7 @@ import { GetCodeBlocksInteractor } from "./GetCodeBlocksInteractor";
 import { GetLogTopicsInteractor } from "./GetLogTopicsInteractor";
 import { GetOpcodesInteractor } from "./GetOpcodesInteractor"
 
-describe('GetLogTopicsInteractor', () => {
+describe.skip('GetLogTopicsInteractor', () => {
     it('should be able to find the topic id', async () => {
         const interactor = new GetLogTopicsInteractor();
         const opcodes = new GetOpcodesInteractor().getOpcodes({

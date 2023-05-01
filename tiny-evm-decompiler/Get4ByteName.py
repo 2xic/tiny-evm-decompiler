@@ -31,7 +31,7 @@ def find_signature(signature):
         with open(path, "w") as file:
             file.write(text)
 
-    soup = BeautifulSoup(text).findAll("tr")
+    soup = BeautifulSoup(text, features="lxml").findAll("tr")
     if 2 != len(soup):
         return {
             "raw": signature

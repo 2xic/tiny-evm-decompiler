@@ -9,9 +9,9 @@ export function getCodeBlock({codeblock}: {codeblock: CodeBlocks}){
         return item.opcode.isReal;
     }).map((item) => {
         logger.log(
-            `0x${item.offset.toString(16)} ${item.opcode.mnemonic} ${item.opcode.arguments.join(' ')}`
+            `0x${item.offset.toString(16)} ${item.opcode.mnemonic} ${item.opcode.arguments}`
         )
-        return `${item.opcode.mnemonic} ${item.opcode.arguments.join(' ')}`
+        return `${item.opcode.mnemonic} ${item.opcode.arguments}`
     }))
     
     const mnemonic2Buffer = new MnemonicParser().parse({

@@ -72,7 +72,9 @@ export class ResolveOrphansInteractor extends MyEmitter<{
             // *Building the edges*
             if (lastOpcode.opcode.mnemonic !== OpcodeMnemonic.JUMP) {
                 block.calls.forEach((call) => {
-                    const successor = codeBlocks.find((item) => item.name === call);
+                    const successor = codeBlocks.find((item) => 
+                        parseInt(item.name, 16) === parseInt(call, 16)
+                    );
                     if (!successor) {
                         throw new Error('Something is wrong');
                     }

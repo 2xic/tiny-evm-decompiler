@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import { OpcodeLookups, OpcodeMnemonic } from 'tinyeth/dist/';
 import { OpCode } from 'tinyeth/dist/evm/OpCode';
 
@@ -27,7 +28,7 @@ export class GetOpcodesInteractor {
           opcode: {
             opcode: currentOpcode,
             mnemonic: `INVALID`,
-            arguments: [],
+            arguments: '',
             isReal: false,
           },
           codeBlockType: CodeBlockType.INVALID,
@@ -41,7 +42,7 @@ export class GetOpcodesInteractor {
           opcode: {
             opcode: currentOpcode,
             mnemonic: `DATA`,
-            arguments: [`0x${currentOpcode.toString(16)}`],
+            arguments: `0x${currentOpcode.toString(16)}`,
             isReal: false,
           },
           codeBlockType: CodeBlockType.DATA,
@@ -63,7 +64,7 @@ export class GetOpcodesInteractor {
           opcode: {
             opcode: currentOpcode,
             mnemonic: opcode.mnemonic,
-            arguments: Array.from(opcodeArguments).map((item) => `0x${item.toString(16)}`),
+            arguments: opcodeArguments.length ? `0x${opcodeArguments.toString('hex')}` : '',
             isReal: true,
           },
           value: currentOpcode,
@@ -89,7 +90,7 @@ export type ParsedOpcodes = {
 
 export interface FakeOpcode {
   mnemonic: string;
-  arguments: unknown[];
+  arguments: string | Array<string>;
   opcode: number;
   isReal: boolean;
 }
@@ -97,7 +98,7 @@ export interface FakeOpcode {
 export interface RealOpcode {
   mnemonic: string;
   opcode: number;
-  arguments: unknown[];
+  arguments: string | Array<string>;
   isReal: boolean;
 }
 

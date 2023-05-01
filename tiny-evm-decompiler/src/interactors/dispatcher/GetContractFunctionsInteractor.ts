@@ -18,7 +18,7 @@ export class GetContractFunctionsInteractor {
 
     private async runWithCalldata({ contract }: { contract: Buffer }) {
         const evm = getFreshContainer().get(ExposedEvm);
-        console.log(contract)
+
         evm.boot({
             program: contract,
             context: {
@@ -49,16 +49,9 @@ export class GetContractFunctionsInteractor {
                     location: evm.pc,
                 });
             }
-            /*
-            console.log([evm.pc.toString(16), opcode.opcode.mnemonic, [...new Array(opcode.opcode.length - 1)].map((_, index) => {
-                return  evm.peekBuffer(index + 1).toString(16)
-            })])
-            */
-            // console.log([evm.pc, evm.isRunning])
             await evm.step().catch((err) => {
                 // console.log(err);
             });
-            // console.log([evm.pc.toString(16), evm.isRunning]);
         }
         return values;
     }

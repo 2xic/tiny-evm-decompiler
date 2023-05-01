@@ -42,7 +42,7 @@ export class GetControlsFlowInteractor {
 
             mappingCodeBlocks.push({
                 ...codeblock,
-                calls: [...calls],
+                calls: [...calls].map((item) => parseInt(item, 16).toString(16)),
             })
         }
 
