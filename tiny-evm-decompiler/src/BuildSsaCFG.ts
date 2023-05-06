@@ -8,7 +8,7 @@ import { ResolveOrphansInteractor } from './interactors/ResolveOrphansInteractor
 import { GetGraphCodeBlockDispatcher } from './interactors/dispatcher/GetGraphCodeBlockDispatcher';
 import { GetSsaInteractor } from './interactors/ssa/GetSsaInteractor';
 
-const contract = getContractPath(__dirname);
+const { contract } = getContractPath(__dirname);
 const opcodes = new GetOpcodesInteractor().getOpcodes({
     contract,
 })

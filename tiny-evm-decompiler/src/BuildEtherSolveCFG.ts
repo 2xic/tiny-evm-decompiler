@@ -1,16 +1,18 @@
 import 'reflect-metadata'
 import { GetCodeBlocksInteractor } from "./interactors/GetCodeBlocksInteractor";
-import { GetControlsFlowInteractor, GraphCodeBlocks } from "./interactors/GetControlsFlowInteractor";
 import { GetOpcodesInteractor } from "./interactors/GetOpcodesInteractor";
 import fs from 'fs';
 import { getContractPath } from './helpers/getContractPath';
-import { ResolveOrphansInteractor } from './interactors/ResolveOrphansInteractor';
 import { GetContractFunctionsInteractor } from './interactors/dispatcher/GetContractFunctionsInteractor';
 import {
     BuildCfgInteractor
 } from './interactors/BuildCfgInteractor';
 
-const contract = getContractPath(__dirname);
+const {contract, output} = getContractPath(__dirname);
+console.log({
+    output,
+    contract: contract.toString('hex')
+})
 const opcodes = new GetOpcodesInteractor().getOpcodes({
     contract,
 })
@@ -23,7 +25,7 @@ const contractCodeBlocks = new GetCodeBlocksInteractor().getCodeBlocks(opcodes);
     const { graph } = await new BuildCfgInteractor().build({
         opcodes
     });
-    fs.writeFileSync('cfg.json', JSON.stringify({
+    fs.writeFileSync(output, JSON.stringify({
         graph,
         functions
     }));

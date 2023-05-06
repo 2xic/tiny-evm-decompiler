@@ -11,21 +11,21 @@
     "package": "electron-forge package",
     "osx-build": "npm run make -- --platform darwin",
     "make": "electron-forge make",
-    "ethersolve-cfg-hello": "npm run build && node dist/BuildEtherSolveCFG.js -c ../../example_contracts/hello_world.sol/HelloWorld.json && python3 PlotCFG.py ../example_cfgs/HelloWorld",
-    "ethersolve-cfg-multiple-functions": "npm run build && node dist/BuildEtherSolveCFG.js -c ../../example_contracts/multiple_functions.sol/MultipleFunctions.json && python3 PlotCFG.py ../example_cfgs/MultipleFunctions",
-    "ethersolve-cfg-multiple-events": "npm run build && node dist/BuildEtherSolveCFG.js -c ../../example_contracts/multiple_simple_events.sol/MultipleSimpleEvents.json && python3 PlotCFG.py ../example_cfgs/MultipleSimpleEvents",
-    "ethersolve-cfg-event": "npm run build && node dist/BuildEtherSolveCFG.js -c ../../example_contracts/simple_event.sol/SimpleEvent.json && python3 PlotCFG.py ../example_cfgs/SimpleEvent",
-    "ethersolve-cfg-counter": "npm run build && node dist/BuildEtherSolveCFG.js -c ../../example_contracts/counter.sol/Counter.json && python3 PlotCFG.py ../example_cfgs/counter",
-    "ethersolve-cfg-counter-vyper": "npm run build && node dist/BuildEtherSolveCFG.js -c ../../example_contracts/counter.vy/Counter.json && python3 PlotCFG.py ../example_cfgs/counter_vy",
+    "ethersolve-cfg-hello": "npm run build && node dist/BuildEtherSolveCFG.js -c ../../example_contracts/unoptimized/hello_world.sol/HelloWorld.json && python3 PlotCFG.py ../example_cfgs/HelloWorld",
+    "ethersolve-cfg-multiple-functions": "npm run build && node dist/BuildEtherSolveCFG.js -c ../../example_contracts/unoptimized/multiple_functions.sol/MultipleFunctions.json && python3 PlotCFG.py ../example_cfgs/MultipleFunctions",
+    "ethersolve-cfg-multiple-events": "npm run build && node dist/BuildEtherSolveCFG.js -c ../../example_contracts/unoptimized/multiple_simple_events.sol/MultipleSimpleEvents.json && python3 PlotCFG.py ../example_cfgs/MultipleSimpleEvents",
+    "ethersolve-cfg-event": "npm run build && node dist/BuildEtherSolveCFG.js -c ../../example_contracts/unoptimized/simple_event.sol/SimpleEvent.json && python3 PlotCFG.py ../example_cfgs/SimpleEvent",
+    "ethersolve-cfg-counter": "npm run build && node dist/BuildEtherSolveCFG.js -c ../../example_contracts/unoptimized/counter.sol/Counter.json && python3 PlotCFG.py ../example_cfgs/counter",
+    "ethersolve-cfg-counter-vyper": "npm run build && node dist/BuildEtherSolveCFG.js -c ../../example_contracts/unoptimized/counter.vy/Counter.json && python3 PlotCFG.py ../example_cfgs/counter_vy",
 
-    "ssa-hello": "npm run build && node dist/BuildSsaCFG.js -c ../../example_contracts/hello_world.sol/HelloWorld.json && python3 PlotSSA.py ../example_ssa/HelloWorld",
+    "ssa-hello": "npm run build && node dist/BuildSsaCFG.js -c ../../example_contracts/unoptimized/hello_world.sol/HelloWorld.json && python3 PlotSSA.py ../example_ssa/HelloWorld",
 
     "create-example-graphs": "npm run ethersolve-cfg-hello && npm run ethersolve-cfg-multiple-functions && npm run ethersolve-cfg-multiple-events && npm run ethersolve-cfg-event",
     "create-example-ssa": "npm run ssa-hello",
     
-    "log-hello": "npm run build && node dist/ExtractLog.js -c ../../example_contracts/hello_world.sol/HelloWorld.json",
-    "log-event": "npm run build && node dist/ExtractLog.js -c ../../example_contracts/simple_event.sol/SimpleEvent.json",
-    "log-multiple-events": "npm run build && node dist/ExtractLog.js -c ../../example_contracts/multiple_simple_events.sol/MultipleSimpleEvents.json"
+    "log-hello": "npm run build && node dist/ExtractLog.js -c ../../example_contracts/unoptimized/hello_world.sol/HelloWorld.json",
+    "log-event": "npm run build && node dist/ExtractLog.js -c ../../example_contracts/unoptimized/simple_event.sol/SimpleEvent.json",
+    "log-multiple-events": "npm run build && node dist/ExtractLog.js -c ../../example_contracts/unoptimized/multiple_simple_events.sol/MultipleSimpleEvents.json"
   },
   "author": "",
   "license": "ISC",

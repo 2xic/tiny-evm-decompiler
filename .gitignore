@@ -13,3 +13,7 @@ ssa.json
 functions.json
 .cache
 *.pyc
+optimized.json
+unoptimized.json
+vyper.json
+solc.json

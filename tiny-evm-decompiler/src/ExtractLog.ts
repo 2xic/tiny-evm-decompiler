@@ -4,7 +4,7 @@ import { GetOpcodesInteractor } from "./interactors/GetOpcodesInteractor";
 import { GetLogTopicsInteractor } from './interactors/GetLogTopicsInteractor';
 import { getContractPath } from './helpers/getContractPath';
 
-const contract = getContractPath(__dirname);
+const {contract} = getContractPath(__dirname);
 const opcodes = new GetOpcodesInteractor().getOpcodes({
   contract,
 })

@@ -99,6 +99,14 @@ export const SymbolicOpcodes: Record<number, SymbolicOpcode> = {
         outputs: 1,
         consumes: 1,
     }),
+    0x54: new SymbolicOpcode({
+        outputs: 1,
+        consumes: 1,
+    }),
+    0x55: new SymbolicOpcode({
+        outputs: 0,
+        consumes: 2,
+    }),
     // JUMP
     0x56: new SymbolicOpcode({
         outputs: 0,
